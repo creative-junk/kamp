@@ -4,16 +4,13 @@
  * (C) 2017 Crysoft Dynamics Ltd
  * Karbon V 2.1
  * User: Maxx
- * Date: 6/7/2017
- * Time: 12:29 PM
+ * Date: 9/28/2017
+ * Time: 4:26 PM
  ********************************************************************************/
 
 namespace Crysoft\MpesaBundle\Helpers;
-
-
-use Crysoft\MpesaBundle\Exceptions\InvalidRequestException;
-use Crysoft\MpesaBundle\Exceptions\TransactionException;
 use GuzzleHttp\Client;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Mpesa
@@ -25,6 +22,18 @@ class Mpesa
      * @var string
      */
     protected $endPoint;
+
+    /**
+     * The Mpesa Status Endpoint
+     * @var string
+     */
+    protected $statusEndPoint;
+    /**
+     * The Token Endpoint
+     * @var string
+     */
+    protected $tokenEndPoint;
+
     /**
      * The Callback URL to be queried on completion
      * @var string
@@ -81,6 +90,18 @@ class Mpesa
      */
     protected $keys;
     /**
+     * Consumer key
+     *
+     * @var string
+     */
+    protected $consumerKey;
+    /**
+     * Consumer Secret
+     *
+     * @var string
+     */
+    protected $consumerSecret;
+    /**
      * The request to be sent to the endpoint
      *
      * @var string
@@ -92,30 +113,13 @@ class Mpesa
      * @var string
      */
     protected $transactionNumber;
-
     /**
-     * The Guzzle Client used to make the request to the endpoint
+     * Generated Unique Token
      *
-     * @var Client
+     * @var string
      */
-    private $client;
+    protected $accessToken;
 
-    /**
-     * Required keys.
-     *
-     * @var array
-     */
-    protected $rules = [
-        'CM_PAYBILL',
-        'CM_PASSWORD',
-        'CM_TIMESTAMP',
-        'CM_TRANS_ID',
-        'CM_REF_ID',
-        'CM_AMOUNT',
-        'CM_NUMBER',
-        'CM_CALL_URL',
-        'CM_CALL_METHOD'
-    ];
 
     /**
      * Transactor constructor.
@@ -127,13 +131,6 @@ class Mpesa
 
         $this->setUpAPI();
 
-        $this->client = new Client([
-           'verify'             => false,
-            'timeout'           => 60,
-            'allow_redirects'   => false,
-            'expect'            => false
-        ]);
-
     }
 
     public function request($amount){
@@ -144,6 +141,25 @@ class Mpesa
 
         return $this;
     }
+
+    /**
+     * setup the API options
+     */
+    protected function setUpAPI()
+    {
+        $config = $this->container->getParameter('crysoft_mpesa.config');
+
+        $this->endPoint         = $config['mpesa']['endpoint'];
+        $this->tokenEndPoint    = $config['mpesa']['token_endpoint'];
+        $this->statusEndPoint   = $config['mpesa']['status_endpoint'];
+        $this->callbackUrl      = $config['mpesa']['callback_url'];
+        $this->callbackMethod   = $config['mpesa']['callback_method'];
+        $this->paybillNumber    = $config['mpesa']['paybill_number'];
+        $this->passKey          = $config['mpesa']['pass_key'];
+        $this->consumerSecret   = $config['mpesa']['consumer_secret'];
+        $this->consumerKey      = $config['mpesa']['consumer_key'];
+    }
+
 
     /**
      * Set the Mpesa Number to deduct funds from
@@ -202,20 +218,6 @@ class Mpesa
     }
 
     /**
-     * setup the API options
-     */
-    protected function setUpAPI()
-    {
-        $config = $this->container->getParameter('crysoft_mpesa.config');
-
-        $this->endPoint         = $config['mpesa']['endpoint'];
-        $this->callbackUrl      = $config['mpesa']['callback_url'];
-        $this->callbackMethod   = $config['mpesa']['callback_method'];
-        $this->paybillNumber    = $config['mpesa']['paybill_number'];
-        $this->passKey          = $config['mpesa']['pass_key'];
-    }
-
-    /**
      * Process the transaction request
      *
      * @param $amount
@@ -231,6 +233,41 @@ class Mpesa
 
         return $this->handle();
     }
+    /**
+     * Validate and Handle the transaction
+     * @return mixed | \Psr\Http\Message\ResponseInterface
+     */
+    protected function handle()
+    {
+
+        //$this->accessToken=$this->generateToken();
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->endPoint);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:Bearer ' . $this->accessToken)); //setting custom header
+            $curl_post_data = array(//Request Parameters
+                'BusinessShortCode' => $this->paybillNumber,
+                'Password' => $this->password,
+                'Timestamp' => $this->timestamp,
+                'TransactionType' => 'CustomerPayBillOnline',
+                'Amount' => $this->amount,
+                'PartyA' => $this->number,
+                'PartyB' => $this->paybillNumber,
+                'PhoneNumber' => $this->number,
+                'CallBackURL' => $this->callbackUrl,
+                'AccountReference' => $this->referenceId,
+                'TransactionDesc' => 'Membership Fee'
+            );
+            $data_string = json_encode($curl_post_data);
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+            $response = curl_exec($ch);
+
+            return $response;
+    }
 
     /**
      * Request for the transaction status
@@ -238,13 +275,50 @@ class Mpesa
      * @param $transactionId
      * @return mixed | \Psr\Http\Message\ResponseInterface
      */
-    protected function status($transactionId){
-        $this->referenceId = $transactionId;
-        $this->initialize();
+    public function requestTransactionStatus($transactionId){
 
-        return $this->handleStatusRequest();
+        $encodedPassword = $this->generateEncryptedPassword();
+       $this->generateToken();
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $this->statusEndPoint);
+        var_dump($transactionId);exit;
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:Bearer ' . $this->accessToken)); //setting custom header
+
+
+        $curl_post_data = array(
+            //Fill in the request parameters with valid values
+            'Initiator' => $this->paybillNumber,
+            'SecurityCredential' => $encodedPassword,
+            'CommandID' => 'TransactionStatusQuery',
+            'TransactionID' => $transactionId,
+            'PartyA' => $this->paybillNumber,
+            'IdentifierType' => '1',
+            'ResultURL' => 'http://creative-junk.com',
+            'QueueTimeOutURL' => 'http://creative-junk.com',
+            'Remarks' => 'Membership Fee',
+            'Occasion' => ' '
+        );
+
+        $data_string = json_encode($curl_post_data);
+
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+
+        $curl_response = curl_exec($curl);
+        if($curl_response === false)
+        {
+            echo 'Curl error: ' . curl_error($curl);
+        }
+        var_dump($curl_response);exit;
+
+        return $curl_response;
 
     }
+
+
     /**
      * Initialize the transaction
      */
@@ -252,35 +326,9 @@ class Mpesa
     {
         $this->setTimestamp();
         $this->generatePassword();
-        $this->setupKeys();
+        $this->generateToken();
 
     }
-
-    /**
-     * Validate and Handle the transaction
-     * @return mixed | \Psr\Http\Message\ResponseInterface
-     */
-    protected function handle()
-    {
-        $this->validateKeys();
-        $this->generateRequest('request.xml');
-        $this->send();
-        $this->generateRequest('process.xml');
-
-        return $this->send();
-    }
-    /**
-     * Validate and Handle the transaction Status Request
-     * @return mixed | \Psr\Http\Message\ResponseInterface
-     */
-    protected function handleStatusRequest()
-    {
-        //$this->validateKeys();
-        $this->generateRequest('status.xml');
-
-        return $this->execute();
-    }
-
     /**
      * Set the Transaction timestamp
      * @return string
@@ -297,109 +345,29 @@ class Mpesa
     protected function generatePassword()
     {
         $passwordSource = $this->paybillNumber.$this->passKey.$this->timestamp;
-        $this->password = base64_encode(hash("sha256",$passwordSource));
+        $this->password = base64_encode($passwordSource);
 
         return $this->password;
     }
+    protected function generateToken(){
 
-    protected function setupKeys()
-    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $this->tokenEndPoint);
+        $credentials = base64_encode($this->consumerKey.':'.$this->consumerSecret);
 
-        $this->keys = [
-            'CM_PAYBILL'          => $this->paybillNumber,
-            'CM_PASSWORD'         => $this->password,
-            'CM_TIMESTAMP'        => $this->timestamp,
-            'CM_TRANS_ID'         => $this->transactionNumber,
-            'CM_TRANSACTION_ID'   => $this->transactionNumber,
-            'CM_REF_ID'           => $this->referenceId,
-            'CM_AMOUNT'           => $this->amount,
-            'CM_NUMBER'           => $this->number,
-            'CM_CALLBACK_URL'     => $this->callbackUrl,
-            'CM_CALLBACK_METHOD'  => $this->callbackMethod,
-        ];
-       // var_dump($this->keys['CM_TRANS_ID']);exit;
-    }
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Basic '.$credentials)); //setting a custom header
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-    protected function validateKeys()
-    {
-        $this->validate($this->keys);
-    }
+        $curl_response = curl_exec($curl);
+        curl_close($curl);
 
-    /**
-     * Fetch the XML document and include the transaction data
-     *
-     * @param $document
-     */
-    protected function generateRequest($document)
-    {
-        $this->request = file_get_contents(__DIR__ . '/Soap/' . $document);
+        $response = json_decode($curl_response,true);
 
-        foreach ($this->keys as $key => $value) {
-            $this->request = str_replace($key, $value, $this->request);
-        }
-    }
+        $this->accessToken = $response['access_token'];
+        return $this->accessToken;
 
-    /**
-     * Execute the Request
-     *
-     * @return mixed | \Psr\Http\Message\ResponseInterface
-     */
-
-    protected function send()
-    {
-        $response = $this->client->request('POST',$this->endPoint,[
-            'body'=>  $this->request
-        ]);
-        $this->validateResponse($response);
-        return $response;
-    }
-    /**
-     * Execute the Status Request
-     *
-     * @return mixed | \Psr\Http\Message\ResponseInterface
-     */
-
-    protected function execute()
-    {
-       /* $response = $this->client->request('GET',$this->endPoint,[
-            'body'=>  $this->request
-        ]);*/
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->endPoint);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_VERBOSE, '0');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '0');
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, '0');
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        return $response;
-    }
-
-    /**
-     * Validate the response to verify success, throw error if not
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @throws TransactionException
-     */
-    protected function validateResponse($response)
-    {
-        $message = $response->getBody()->getContents();
-        $response->getBody()->rewind();
-        $doc = new \DOMDocument();
-        $doc->loadXML($message);
-
-        $responseCode = $doc->getElementsByTagName('RETURN_CODE')->item(0)->nodeValue;
-        if ($responseCode != '00'){
-            $responseDescription = $doc
-                ->getElementsByTagName('DESCRIPTION')
-                ->item(0)
-                ->nodeValue;
-            throw new TransactionException('Failure - '. $responseDescription);
-        }
     }
 
     /**
@@ -417,22 +385,21 @@ class Mpesa
         }
         return $randomString;
     }
-    /**
-     * Check if key exists else throw exception.
-     *
-     * @param array $data
-     *
-     * @throws InvalidRequestException
-     */
-    protected function validate($data = [])
+
+    protected function generateEncryptedPassword()
     {
-       /* foreach ($this->rules as $value) {
-            if (! array_key_exists($value, $data)) {
-                throw new InvalidRequestException(InvalidRequestException::ERRORS[$value]);
-            }
-        }*/
+
+        $cert = 'cert.cer';
+        $plainTextPassword ="";
+        $public_key = openssl_pkey_get_public(file_get_contents($cert));
+        $keyData = openssl_pkey_get_details($public_key);
+        //var_dump($keyData['key']);exit;
+
+        openssl_public_encrypt($plainTextPassword, $encrypted, $keyData['key'], OPENSSL_PKCS1_PADDING);
+
+        $password=base64_encode($encrypted);
+       // var_dump($password);exit;
+        return $password;
+
     }
-
-
-
 }

@@ -116,9 +116,13 @@ vich_uploader:
 #Crysoft Mpesa Bundle
 crysoft_mpesa:
     mpesa:
-        endpoint:           https://safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl                   # The M-Pesa API Endpoint.
+        endpoint:           https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest                   # The M-Pesa API Endpoint.
+        token_endpoint:     https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials   # Mpesa API Token Endpoint
+        status_endpoint:    https://sandbox.safaricom.co.ke/mpesa/transactionstatus/v1/query                  # Mpesa API Status Endpoint
         callback_url:       http://portal.prisk.or.ke/member/mpesa/success                # The callback URL to be queried on transaction completion.
         callback_method:    POST               # The callback method to be used.
-        paybill_number:     560400               # The merchant's Paybill number.
-        pass_key:           1c54cb3be3df883ccbb1e29777cce4e096280a22e3a19e0ee067cb841ab86df3                     # The SAG Passkey given on registration.
+        paybill_number:     174379               # The merchant's Paybill number.
+        pass_key:           bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919                     # The SAG Passkey given on registration.
+        consumer_key:       h42gshGO1QImM7eUuG4GgVCMDP1iLjWN
+        consumer_secret:    c9UlZ92qH6fZYLmc
 

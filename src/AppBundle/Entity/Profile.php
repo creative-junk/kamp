@@ -112,7 +112,7 @@ class Profile
      */
     private $incorporationNumber;
     /**
-     * @ORM\Column(type="string",nullable=true)
+     * @ORM\Column(type="datetime",nullable=true)
      */
     private $incorporationDate;
     /**
@@ -132,7 +132,7 @@ class Profile
      */
     private $sourceOfData;
     /**
-     * @ORM\Column(type="date",nullable=true)
+     * @ORM\Column(type="datetime",nullable=true)
      */
     private $registrationDate;
     /**
@@ -300,7 +300,7 @@ class Profile
      */
     private $isBoardRejected;
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     private $boardRejectionAt;
     /**
@@ -312,7 +312,7 @@ class Profile
      */
     private $boardRejectionReason;
     /**
-     * @ORM\Column(type="integer",)
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $nrBoardApprovals;
     /**

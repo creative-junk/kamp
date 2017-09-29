@@ -10,6 +10,7 @@ use AppBundle\Form\DocumentsFormType;
 use AppBundle\Form\MpesaFormType;
 use AppBundle\Form\ProfileForm;
 use Crysoft\MpesaBundle\Helpers\Mpesa;
+use Crysoft\MpesaBundle\Helpers\Mpesax;
 use Crysoft\MpesaBundle\Helpers\MpesaStatus;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -58,12 +59,12 @@ class ProfileController extends Controller
             $em->persist($profile);
             $em->flush();
             if ($payment == 'pay') {
-                $this->sendWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
+        //        $this->sendWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
                 $this->container->get('session')->set('profile', $profile);
                 return $this->redirectToRoute('pay_mpesa');
 
             } else {
-                $this->sendUnpaidWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
+      //          $this->sendUnpaidWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
                 return $this->redirectToRoute('profile_updated', array('profileId' => $profile->getId()));
             }
         } else {
@@ -94,14 +95,11 @@ class ProfileController extends Controller
             $referenceId = $userProfile->getIdNumber();
             $mpesa = new Mpesa($this->container);
             $transactionId = $mpesa->generateTransactionNumber();
+            $this->container->get('session')->set('transactionId',$transactionId);
+
             $response = $mpesa->request($amount)->from($phoneNumber)->usingReferenceId($referenceId)->usingTransactionId($transactionId)->transact();
-            $statusCode = $response->getStatusCode();
-            $this->container->get('session')->set('transactionId', $transactionId);
-            if ($statusCode == 200) {
-                return $this->redirectToRoute('mpesa_paid');
-            } else {
-                return $this->redirectToRoute('mpesa_failed');
-            }
+            return $this->redirectToRoute('mpesa_paid');
+
 
         }
         return $this->render('profile/pay.htm.twig', ['profile' => $userProfile, 'mpesaForm' => $form->createView()]);
@@ -130,10 +128,13 @@ class ProfileController extends Controller
     {
         $mpesa = new Mpesa($this->container);
         $profile = $this->container->get('session')->get('profile');
+
         $transactionId = $this->container->get('session')->get('transactionId');
+
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository("AppBundle:Profile")->findOneBy(['id' => $profile->getId()]);
-        $response = $mpesa->usingTransactionId($transactionId)->requestStatus();
+        $response = $mpesa->requestTransactionStatus($transactionId);
+
         //var_dump($response);exit;
         $mpesaStatus = new MpesaStatus($response);
         $customerNumber = $mpesaStatus->getCustomerNumber();
@@ -176,7 +177,7 @@ class ProfileController extends Controller
      */
     public function verifyPaymentAction(Request $request,Profile $profile)
     {
-        $mpesa = new Mpesa($this->container);
+        $mpesa = new Mpesax($this->container);
 
         $em = $this->getDoctrine()->getManager();
         $transactionId = $profile->getMpesaVerificationCode();
@@ -268,7 +269,7 @@ class ProfileController extends Controller
             $amount = 10;
             $phoneNumber = $form["phoneNumber"]->getData();
             $referenceId = $userProfile->getIdNumber();
-            $mpesa = new Mpesa($this->container);
+            $mpesa = new Mpesax($this->container);
             $transactionId = $mpesa->generateTransactionNumber();
             $response = $mpesa->request($amount)->from($phoneNumber)->usingReferenceId($referenceId)->usingTransactionId($transactionId)->transact();
             $statusCode = $response->getStatusCode();
