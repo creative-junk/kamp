@@ -46,7 +46,6 @@ class UserRepository extends EntityRepository
         return $this->createQueryBuilder('user')
             ->andWhere('user.roles = :userRole')
             ->setParameter(':userRole','["ROLE_USER"]')
-            ->orderBy('user.profileLinkedAt','ASC')
             ->getQuery()
             ->execute();
     }
@@ -69,7 +68,6 @@ class UserRepository extends EntityRepository
         return $this->createQueryBuilder('user')
             ->andWhere('user.isPasswordCreated = :passwordCreated')
             ->setParameter(':passwordCreated',false)
-            ->orderBy('user.profileLinkedAt','ASC')
             ->getQuery()
             ->execute();
     }

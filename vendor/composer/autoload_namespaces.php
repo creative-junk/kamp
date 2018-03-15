@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'WhiteOctober\\TCPDFBundle' => array($vendorDir . '/whiteoctober/tcpdf-bundle'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
+    'Stfalcon\\Bundle\\TinymceBundle' => array($vendorDir . '/stfalcon/tinymce-bundle'),
     'SensioLabs\\Security' => array($vendorDir . '/sensiolabs/security-checker'),
     'ProxyManager\\' => array($vendorDir . '/ocramius/proxy-manager/src'),
     'Metadata\\' => array($vendorDir . '/jms/metadata/src'),

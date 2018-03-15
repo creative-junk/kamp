@@ -17,18 +17,18 @@
                         <table id="data" class="table table-striped b-t b-b">
                             <thead>
                             <tr>
-                                <th  style="width:20%">Names</th>
-                                <th  style="width:15%">Stage Name</th>
+                                <th  style="width:20%">Applicant Names</th>
                                 <th  style="width:15%">ID Number</th>
                                 <th  style="width:15%">Email</th>
-                                <th  style="width:25%">Created At</th>
+                                <th style="">Registered On</th>
+                                <th  style="width:25%">Approved on</th>
                                 <th  style="width:25%">Manage</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users  %}
                                 <tr>
-                                    <td><a style="color:#0cc2aa" href="{{ path('board-review-profile',{'id': user.id }) }}">{{ user.fullName }}</a></td>
+                                    <td><a style="color:#0cc2aa" href="{{ path('board-review-profile',{'id': user.id }) }}">{{ user.applicantName }}</a></td>
                                     <td>{{ user.stageName }}</td>
                                     <td>{{ user.idNumber }}</td>
                                     <td>{{ user.emailAddress }}</td>

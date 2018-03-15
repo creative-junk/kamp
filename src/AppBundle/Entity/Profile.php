@@ -30,35 +30,13 @@ class Profile
     private $id;
     /**
      * @ORM\Column(type="string")
-     */
-    private $companyType;
-    /**
-     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
-    private $firstName;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $middleName;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $lastName;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $ipn;
+    private $applicantName;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
     private $memberNumber;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $prefix;
     /**
      * @ORM\Column(type="date",nullable=true)
      * @Assert\NotBlank()
@@ -68,73 +46,15 @@ class Profile
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
-    private $companyName;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $nationality;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $language;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $maritalStatus;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $spouseName;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
     private $idNumber;
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @ORM\Column(type="string",nullable=true)
      */
     private $itaxPin;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
-    private $countryOfResidence;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $memberType;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
     private $gender;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $incorporationNumber;
-    /**
-     * @ORM\Column(type="datetime",nullable=true)
-     */
-    private $incorporationDate;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $countryFounded;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $countyOfOperation;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $registrationNumber;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $sourceOfData;
-    /**
-     * @ORM\Column(type="datetime",nullable=true)
-     */
-    private $registrationDate;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -144,6 +64,16 @@ class Profile
      * @Assert\NotBlank()
      */
     private $physicalAddress;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
+    private $city;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $county;
+
     /**
      * @ORM\Column(type="string")
      */
@@ -157,24 +87,11 @@ class Profile
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
-    private $city;
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $country;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $phoneNumber;
+    private $mobileNumber;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
-    private $altPhoneNumber;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $faxNumber;
+    private $telephoneNumber;
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
@@ -183,11 +100,11 @@ class Profile
     /**
      * @ORM\Column(type="string",nullable=true)
      */
-    private $website;
+    private $emailAddress2;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
-    private $nameOfPayee;
+    private $website;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -198,46 +115,127 @@ class Profile
      */
     private $accountName;
     /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $bank;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $bankBranch;
-    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
     private $accountNumber;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $currency;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     */
-    private $bankAccountType;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $bankPostalAddress;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $iban;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $swiftBic;
 
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $bank;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank()
+     */
+    private $bankBranch;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank()
+     */
+    private $bankCode;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank()
+     */
+    private $sortCode;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $swiftCode;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isCollectingSocietiesMember=false;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $collectingSocieties;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinFirstName;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinMiddleName;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinLastName;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinRelationship;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinIdNumber;
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $kinDateOfBirth;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinGender;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinPhysicalAddress;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinCity;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinCounty;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinPostalAddress;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinPostalCode;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $kinTelephoneNumber;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $kinMobileNumber;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $kinEmailAddress;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isKinMinor=false;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $kinGuardian;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $termsOfService;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $transactionId;
     /**
      * @ORM\Column(type="boolean",nullable=true)
      */
     private $isPaid;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $mpesaProcessed=false;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -369,10 +367,7 @@ class Profile
      * @ORM\Column(type="string",nullable=true)
      */
     private $accountCreated;
-    /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User",mappedBy="myProfile")
-     */
-    private $whoseProfile;
+
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Documents",mappedBy="whichProfile",fetch="EXTRA_LAZY")
      */
@@ -394,82 +389,17 @@ class Profile
     /**
      * @return mixed
      */
-    public function getCompanyType()
+    public function getApplicantName()
     {
-        return $this->companyType;
+        return $this->applicantName;
     }
 
     /**
-     * @param mixed $companyType
+     * @param mixed $applicantName
      */
-    public function setCompanyType($companyType)
+    public function setApplicantName($applicantName)
     {
-        $this->companyType = $companyType;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param mixed $firstName
-     */
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMiddleName()
-    {
-        return $this->middleName;
-    }
-
-    /**
-     * @param mixed $middleName
-     */
-    public function setMiddleName($middleName)
-    {
-        $this->middleName = $middleName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param mixed $lastName
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIpn()
-    {
-        return $this->ipn;
-    }
-
-    /**
-     * @param mixed $ipn
-     */
-    public function setIpn($ipn)
-    {
-        $this->ipn = $ipn;
+        $this->applicantName = $applicantName;
     }
 
     /**
@@ -491,22 +421,6 @@ class Profile
     /**
      * @return mixed
      */
-    public function getPrefix()
-    {
-        return $this->prefix;
-    }
-
-    /**
-     * @param mixed $prefix
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getDateOfBirth()
     {
         return $this->dateOfBirth;
@@ -518,86 +432,6 @@ class Profile
     public function setDateOfBirth($dateOfBirth)
     {
         $this->dateOfBirth = $dateOfBirth;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCompanyName()
-    {
-        return $this->companyName;
-    }
-
-    /**
-     * @param mixed $companyName
-     */
-    public function setCompanyName($companyName)
-    {
-        $this->companyName = $companyName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNationality()
-    {
-        return $this->nationality;
-    }
-
-    /**
-     * @param mixed $nationality
-     */
-    public function setNationality($nationality)
-    {
-        $this->nationality = $nationality;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param mixed $language
-     */
-    public function setLanguage($language)
-    {
-        $this->language = $language;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMaritalStatus()
-    {
-        return $this->maritalStatus;
-    }
-
-    /**
-     * @param mixed $maritalStatus
-     */
-    public function setMaritalStatus($maritalStatus)
-    {
-        $this->maritalStatus = $maritalStatus;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSpouseName()
-    {
-        return $this->spouseName;
-    }
-
-    /**
-     * @param mixed $spouseName
-     */
-    public function setSpouseName($spouseName)
-    {
-        $this->spouseName = $spouseName;
     }
 
     /**
@@ -635,38 +469,6 @@ class Profile
     /**
      * @return mixed
      */
-    public function getCountryOfResidence()
-    {
-        return $this->countryOfResidence;
-    }
-
-    /**
-     * @param mixed $countryOfResidence
-     */
-    public function setCountryOfResidence($countryOfResidence)
-    {
-        $this->countryOfResidence = $countryOfResidence;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMemberType()
-    {
-        return $this->memberType;
-    }
-
-    /**
-     * @param mixed $memberType
-     */
-    public function setMemberType($memberType)
-    {
-        $this->memberType = $memberType;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getGender()
     {
         return $this->gender;
@@ -678,120 +480,6 @@ class Profile
     public function setGender($gender)
     {
         $this->gender = $gender;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIncorporationNumber()
-    {
-        return $this->incorporationNumber;
-    }
-
-    /**
-     * @param mixed $incorporationNumber
-     */
-    public function setIncorporationNumber($incorporationNumber)
-    {
-        $this->incorporationNumber = $incorporationNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIncorporationDate()
-    {
-        return $this->incorporationDate;
-    }
-
-    /**
-     * @param mixed $incorporationDate
-     */
-    public function setIncorporationDate($incorporationDate)
-    {
-        $this->incorporationDate = $incorporationDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCountryFounded()
-    {
-        return $this->countryFounded;
-    }
-
-    /**
-     * @param mixed $countryFounded
-     */
-    public function setCountryFounded($countryFounded)
-    {
-        $this->countryFounded = $countryFounded;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCountyOfOperation()
-    {
-        return $this->countyOfOperation;
-    }
-
-    /**
-     * @param mixed $countyOfOperation
-     */
-    public function setCountyOfOperation($countyOfOperation)
-    {
-        $this->countyOfOperation = $countyOfOperation;
-    }
-
-
-
-    /**
-     * @return mixed
-     */
-    public function getRegistrationNumber()
-    {
-        return $this->registrationNumber;
-    }
-
-    /**
-     * @param mixed $registrationNumber
-     */
-    public function setRegistrationNumber($registrationNumber)
-    {
-        $this->registrationNumber = $registrationNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSourceOfData()
-    {
-        return $this->sourceOfData;
-    }
-
-    /**
-     * @param mixed $sourceOfData
-     */
-    public function setSourceOfData($sourceOfData)
-    {
-        $this->sourceOfData = $sourceOfData;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRegistrationDate()
-    {
-        return $this->registrationDate;
-    }
-
-    /**
-     * @param mixed $registrationDate
-     */
-    public function setRegistrationDate($registrationDate)
-    {
-        $this->registrationDate = $registrationDate;
     }
 
     /**
@@ -829,6 +517,38 @@ class Profile
     /**
      * @return mixed
      */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param mixed $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCounty()
+    {
+        return $this->county;
+    }
+
+    /**
+     * @param mixed $county
+     */
+    public function setCounty($county)
+    {
+        $this->county = $county;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getPostalAddress()
     {
         return $this->postalAddress;
@@ -861,81 +581,33 @@ class Profile
     /**
      * @return mixed
      */
-    public function getCity()
+    public function getMobileNumber()
     {
-        return $this->city;
+        return $this->mobileNumber;
     }
 
     /**
-     * @param mixed $city
+     * @param mixed $mobileNumber
      */
-    public function setCity($city)
+    public function setMobileNumber($mobileNumber)
     {
-        $this->city = $city;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param mixed $country
-     */
-    public function setCountry($country)
-    {
-        $this->country = $country;
+        $this->mobileNumber = $mobileNumber;
     }
 
     /**
      * @return mixed
      */
-    public function getPhoneNumber()
+    public function getTelephoneNumber()
     {
-        return $this->phoneNumber;
+        return $this->telephoneNumber;
     }
 
     /**
-     * @param mixed $phoneNumber
+     * @param mixed $telephoneNumber
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setTelephoneNumber($telephoneNumber)
     {
-        $this->phoneNumber = $phoneNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAltPhoneNumber()
-    {
-        return $this->altPhoneNumber;
-    }
-
-    /**
-     * @param mixed $altPhoneNumber
-     */
-    public function setAltPhoneNumber($altPhoneNumber)
-    {
-        $this->altPhoneNumber = $altPhoneNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFaxNumber()
-    {
-        return $this->faxNumber;
-    }
-
-    /**
-     * @param mixed $faxNumber
-     */
-    public function setFaxNumber($faxNumber)
-    {
-        $this->faxNumber = $faxNumber;
+        $this->telephoneNumber = $telephoneNumber;
     }
 
     /**
@@ -957,6 +629,22 @@ class Profile
     /**
      * @return mixed
      */
+    public function getEmailAddress2()
+    {
+        return $this->emailAddress2;
+    }
+
+    /**
+     * @param mixed $emailAddress2
+     */
+    public function setEmailAddress2($emailAddress2)
+    {
+        $this->emailAddress2 = $emailAddress2;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getWebsite()
     {
         return $this->website;
@@ -973,17 +661,17 @@ class Profile
     /**
      * @return mixed
      */
-    public function getNameOfPayee()
+    public function getPaymentMpesaNumber()
     {
-        return $this->nameOfPayee;
+        return $this->paymentMpesaNumber;
     }
 
     /**
-     * @param mixed $nameOfPayee
+     * @param mixed $paymentMpesaNumber
      */
-    public function setNameOfPayee($nameOfPayee)
+    public function setPaymentMpesaNumber($paymentMpesaNumber)
     {
-        $this->nameOfPayee = $nameOfPayee;
+        $this->paymentMpesaNumber = $paymentMpesaNumber;
     }
 
     /**
@@ -1000,6 +688,22 @@ class Profile
     public function setAccountName($accountName)
     {
         $this->accountName = $accountName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccountNumber()
+    {
+        return $this->accountNumber;
+    }
+
+    /**
+     * @param mixed $accountNumber
+     */
+    public function setAccountNumber($accountNumber)
+    {
+        $this->accountNumber = $accountNumber;
     }
 
     /**
@@ -1037,116 +741,371 @@ class Profile
     /**
      * @return mixed
      */
-    public function getAccountNumber()
+    public function getBankCode()
     {
-        return $this->accountNumber;
+        return $this->bankCode;
     }
 
     /**
-     * @param mixed $accountNumber
+     * @param mixed $bankCode
      */
-    public function setAccountNumber($accountNumber)
+    public function setBankCode($bankCode)
     {
-        $this->accountNumber = $accountNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * @param mixed $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
+        $this->bankCode = $bankCode;
     }
 
     /**
      * @return mixed
      */
-    public function getBankAccountType()
+    public function getSortCode()
     {
-        return $this->bankAccountType;
+        return $this->sortCode;
     }
 
     /**
-     * @param mixed $bankAccountType
+     * @param mixed $sortCode
      */
-    public function setBankAccountType($bankAccountType)
+    public function setSortCode($sortCode)
     {
-        $this->bankAccountType = $bankAccountType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBankPostalAddress()
-    {
-        return $this->bankPostalAddress;
-    }
-
-    /**
-     * @param mixed $bankPostalAddress
-     */
-    public function setBankPostalAddress($bankPostalAddress)
-    {
-        $this->bankPostalAddress = $bankPostalAddress;
+        $this->sortCode = $sortCode;
     }
 
     /**
      * @return mixed
      */
-    public function getIban()
+    public function getSwiftCode()
     {
-        return $this->iban;
+        return $this->swiftCode;
     }
 
     /**
-     * @param mixed $iban
+     * @param mixed $swiftCode
      */
-    public function setIban($iban)
+    public function setSwiftCode($swiftCode)
     {
-        $this->iban = $iban;
+        $this->swiftCode = $swiftCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsCollectingSocietiesMember()
+    {
+        return $this->isCollectingSocietiesMember;
+    }
+
+    /**
+     * @param mixed $isCollectingSocietiesMember
+     */
+    public function setIsCollectingSocietiesMember($isCollectingSocietiesMember)
+    {
+        $this->isCollectingSocietiesMember = $isCollectingSocietiesMember;
     }
 
     /**
      * @return mixed
      */
-    public function getSwiftBic()
+    public function getCollectingSocieties()
     {
-        return $this->swiftBic;
+        return $this->collectingSocieties;
     }
 
     /**
-     * @param mixed $swiftBic
+     * @param mixed $collectingSocieties
      */
-    public function setSwiftBic($swiftBic)
+    public function setCollectingSocieties($collectingSocieties)
     {
-        $this->swiftBic = $swiftBic;
+        $this->collectingSocieties = $collectingSocieties;
     }
-
-
 
     /**
      * @return mixed
      */
-    public function getCreatedAt()
+    public function getKinFirstName()
     {
-        return $this->createdAt;
+        return $this->kinFirstName;
     }
 
     /**
-     * @param mixed $createdAt
+     * @param mixed $kinFirstName
      */
-    public function setCreatedAt($createdAt)
+    public function setKinFirstName($kinFirstName)
     {
-        $this->createdAt = $createdAt;
+        $this->kinFirstName = $kinFirstName;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getKinMiddleName()
+    {
+        return $this->kinMiddleName;
+    }
+
+    /**
+     * @param mixed $kinMiddleName
+     */
+    public function setKinMiddleName($kinMiddleName)
+    {
+        $this->kinMiddleName = $kinMiddleName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinLastName()
+    {
+        return $this->kinLastName;
+    }
+
+    /**
+     * @param mixed $kinLastName
+     */
+    public function setKinLastName($kinLastName)
+    {
+        $this->kinLastName = $kinLastName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinRelationship()
+    {
+        return $this->kinRelationship;
+    }
+
+    /**
+     * @param mixed $kinRelationship
+     */
+    public function setKinRelationship($kinRelationship)
+    {
+        $this->kinRelationship = $kinRelationship;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinIdNumber()
+    {
+        return $this->kinIdNumber;
+    }
+
+    /**
+     * @param mixed $kinIdNumber
+     */
+    public function setKinIdNumber($kinIdNumber)
+    {
+        $this->kinIdNumber = $kinIdNumber;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinDateOfBirth()
+    {
+        return $this->kinDateOfBirth;
+    }
+
+    /**
+     * @param mixed $kinDateOfBirth
+     */
+    public function setKinDateOfBirth($kinDateOfBirth)
+    {
+        $this->kinDateOfBirth = $kinDateOfBirth;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinGender()
+    {
+        return $this->kinGender;
+    }
+
+    /**
+     * @param mixed $kinGender
+     */
+    public function setKinGender($kinGender)
+    {
+        $this->kinGender = $kinGender;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinPhysicalAddress()
+    {
+        return $this->kinPhysicalAddress;
+    }
+
+    /**
+     * @param mixed $kinPhysicalAddress
+     */
+    public function setKinPhysicalAddress($kinPhysicalAddress)
+    {
+        $this->kinPhysicalAddress = $kinPhysicalAddress;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinCity()
+    {
+        return $this->kinCity;
+    }
+
+    /**
+     * @param mixed $kinCity
+     */
+    public function setKinCity($kinCity)
+    {
+        $this->kinCity = $kinCity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinCounty()
+    {
+        return $this->kinCounty;
+    }
+
+    /**
+     * @param mixed $kinCounty
+     */
+    public function setKinCounty($kinCounty)
+    {
+        $this->kinCounty = $kinCounty;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinPostalAddress()
+    {
+        return $this->kinPostalAddress;
+    }
+
+    /**
+     * @param mixed $kinPostalAddress
+     */
+    public function setKinPostalAddress($kinPostalAddress)
+    {
+        $this->kinPostalAddress = $kinPostalAddress;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinPostalCode()
+    {
+        return $this->kinPostalCode;
+    }
+
+    /**
+     * @param mixed $kinPostalCode
+     */
+    public function setKinPostalCode($kinPostalCode)
+    {
+        $this->kinPostalCode = $kinPostalCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinTelephoneNumber()
+    {
+        return $this->kinTelephoneNumber;
+    }
+
+    /**
+     * @param mixed $kinTelephoneNumber
+     */
+    public function setKinTelephoneNumber($kinTelephoneNumber)
+    {
+        $this->kinTelephoneNumber = $kinTelephoneNumber;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinMobileNumber()
+    {
+        return $this->kinMobileNumber;
+    }
+
+    /**
+     * @param mixed $kinMobileNumber
+     */
+    public function setKinMobileNumber($kinMobileNumber)
+    {
+        $this->kinMobileNumber = $kinMobileNumber;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinEmailAddress()
+    {
+        return $this->kinEmailAddress;
+    }
+
+    /**
+     * @param mixed $kinEmailAddress
+     */
+    public function setKinEmailAddress($kinEmailAddress)
+    {
+        $this->kinEmailAddress = $kinEmailAddress;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsKinMinor()
+    {
+        return $this->isKinMinor;
+    }
+
+    /**
+     * @param mixed $isKinMinor
+     */
+    public function setIsKinMinor($isKinMinor)
+    {
+        $this->isKinMinor = $isKinMinor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getKinGuardian()
+    {
+        return $this->kinGuardian;
+    }
+
+    /**
+     * @param mixed $kinGuardian
+     */
+    public function setKinGuardian($kinGuardian)
+    {
+        $this->kinGuardian = $kinGuardian;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransactionId()
+    {
+        return $this->transactionId;
+    }
+
+    /**
+     * @param mixed $transactionId
+     */
+    public function setTransactionId($transactionId)
+    {
+        $this->transactionId = $transactionId;
+    }
+
     /**
      * @return mixed
      */
@@ -1161,6 +1120,22 @@ class Profile
     public function setIsPaid($isPaid)
     {
         $this->isPaid = $isPaid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMpesaProcessed()
+    {
+        return $this->mpesaProcessed;
+    }
+
+    /**
+     * @param mixed $mpesaProcessed
+     */
+    public function setMpesaProcessed($mpesaProcessed)
+    {
+        $this->mpesaProcessed = $mpesaProcessed;
     }
 
     /**
@@ -1262,6 +1237,22 @@ class Profile
     /**
      * @return mixed
      */
+    public function getMpesaVerificationCode()
+    {
+        return $this->mpesaVerificationCode;
+    }
+
+    /**
+     * @param mixed $mpesaVerificationCode
+     */
+    public function setMpesaVerificationCode($mpesaVerificationCode)
+    {
+        $this->mpesaVerificationCode = $mpesaVerificationCode;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getIsUrlvalid()
     {
         return $this->isUrlvalid;
@@ -1307,103 +1298,6 @@ class Profile
         $this->statusDescription = $statusDescription;
     }
 
-    public function __toString()
-    {
-        return $this->getFirstName() . ' ' . $this->getLastName();
-    }
-
-    public function getFullName(){
-        return trim($this->getFirstName() . ' ' . $this->getLastName());
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProcessedBy()
-    {
-        return $this->processedBy;
-    }
-
-    /**
-     * @param mixed $processedBy
-     */
-    public function setProcessedBy($processedBy)
-    {
-        $this->processedBy = $processedBy;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProcessedAt()
-    {
-        return $this->processedAt;
-    }
-
-    /**
-     * @param mixed $processedAt
-     */
-    public function setProcessedAt($processedAt)
-    {
-        $this->processedAt = $processedAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAccountCreated()
-    {
-        return $this->accountCreated;
-    }
-
-    /**
-     * @param mixed $accountCreated
-     */
-    public function setAccountCreated($accountCreated)
-    {
-        $this->accountCreated = $accountCreated;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getWhoseProfile()
-    {
-        return $this->whoseProfile;
-    }
-
-    /**
-     * @param mixed $whoseProfile
-     */
-    public function setWhoseProfile($whoseProfile)
-    {
-        $this->whoseProfile = $whoseProfile;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPaymentMpesaNumber()
-    {
-        return $this->paymentMpesaNumber;
-    }
-
-    /**
-     * @param mixed $paymentMpesaNumber
-     */
-    public function setPaymentMpesaNumber($paymentMpesaNumber)
-    {
-        $this->paymentMpesaNumber = $paymentMpesaNumber;
-    }
-
-    /**
-     * @return ArrayCollection | Documents
-     */
-    public function getProfileDocuments()
-    {
-        return $this->profileDocuments;
-    }
-
     /**
      * @return mixed
      */
@@ -1418,6 +1312,38 @@ class Profile
     public function setIsMembershipApproved($isMembershipApproved)
     {
         $this->isMembershipApproved = $isMembershipApproved;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMembershipApprovedBy()
+    {
+        return $this->membershipApprovedBy;
+    }
+
+    /**
+     * @param mixed $membershipApprovedBy
+     */
+    public function setMembershipApprovedBy($membershipApprovedBy)
+    {
+        $this->membershipApprovedBy = $membershipApprovedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMembershipApprovedAt()
+    {
+        return $this->membershipApprovedAt;
+    }
+
+    /**
+     * @param mixed $membershipApprovedAt
+     */
+    public function setMembershipApprovedAt($membershipApprovedAt)
+    {
+        $this->membershipApprovedAt = $membershipApprovedAt;
     }
 
     /**
@@ -1439,17 +1365,65 @@ class Profile
     /**
      * @return mixed
      */
-    public function getMembershipApprovedAt()
+    public function getIsBoardRejected()
     {
-        return $this->membershipApprovedAt;
+        return $this->isBoardRejected;
     }
 
     /**
-     * @param mixed $membershipApprovedAt
+     * @param mixed $isBoardRejected
      */
-    public function setMembershipApprovedAt($membershipApprovedAt)
+    public function setIsBoardRejected($isBoardRejected)
     {
-        $this->membershipApprovedAt = $membershipApprovedAt;
+        $this->isBoardRejected = $isBoardRejected;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoardRejectionAt()
+    {
+        return $this->boardRejectionAt;
+    }
+
+    /**
+     * @param mixed $boardRejectionAt
+     */
+    public function setBoardRejectionAt($boardRejectionAt)
+    {
+        $this->boardRejectionAt = $boardRejectionAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoardRejectionBy()
+    {
+        return $this->boardRejectionBy;
+    }
+
+    /**
+     * @param mixed $boardRejectionBy
+     */
+    public function setBoardRejectionBy($boardRejectionBy)
+    {
+        $this->boardRejectionBy = $boardRejectionBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoardRejectionReason()
+    {
+        return $this->boardRejectionReason;
+    }
+
+    /**
+     * @param mixed $boardRejectionReason
+     */
+    public function setBoardRejectionReason($boardRejectionReason)
+    {
+        $this->boardRejectionReason = $boardRejectionReason;
     }
 
     /**
@@ -1519,70 +1493,6 @@ class Profile
     /**
      * @return mixed
      */
-    public function getApproval1At()
-    {
-        return $this->approval1At;
-    }
-
-    /**
-     * @param mixed $approval1At
-     */
-    public function setApproval1At($approval1At)
-    {
-        $this->approval1At = $approval1At;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getApproval2At()
-    {
-        return $this->approval2At;
-    }
-
-    /**
-     * @param mixed $approval2At
-     */
-    public function setApproval2At($approval2At)
-    {
-        $this->approval2At = $approval2At;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getApproval3At()
-    {
-        return $this->approval3At;
-    }
-
-    /**
-     * @param mixed $approval3At
-     */
-    public function setApproval3At($approval3At)
-    {
-        $this->approval3At = $approval3At;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMembershipApprovedBy()
-    {
-        return $this->membershipApprovedBy;
-    }
-
-    /**
-     * @param mixed $membershipApprovedBy
-     */
-    public function setMembershipApprovedBy($membershipApprovedBy)
-    {
-        $this->membershipApprovedBy = $membershipApprovedBy;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getBoardApprovalStatus1()
     {
         return $this->boardApprovalStatus1;
@@ -1631,81 +1541,145 @@ class Profile
     /**
      * @return mixed
      */
-    public function getBoardRejectionAt()
+    public function getApproval1At()
     {
-        return $this->boardRejectionAt;
+        return $this->approval1At;
     }
 
     /**
-     * @param mixed $boardRejectionAt
+     * @param mixed $approval1At
      */
-    public function setBoardRejectionAt($boardRejectionAt)
+    public function setApproval1At($approval1At)
     {
-        $this->boardRejectionAt = $boardRejectionAt;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBoardRejectionBy()
-    {
-        return $this->boardRejectionBy;
-    }
-
-    /**
-     * @param mixed $boardRejectionBy
-     */
-    public function setBoardRejectionBy($boardRejectionBy)
-    {
-        $this->boardRejectionBy = $boardRejectionBy;
+        $this->approval1At = $approval1At;
     }
 
     /**
      * @return mixed
      */
-    public function getBoardRejectionReason()
+    public function getApproval2At()
     {
-        return $this->boardRejectionReason;
+        return $this->approval2At;
     }
 
     /**
-     * @param mixed $boardRejectionReason
+     * @param mixed $approval2At
      */
-    public function setBoardRejectionReason($boardRejectionReason)
+    public function setApproval2At($approval2At)
     {
-        $this->boardRejectionReason = $boardRejectionReason;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsBoardRejected()
-    {
-        return $this->isBoardRejected;
-    }
-
-    /**
-     * @param mixed $isBoardRejected
-     */
-    public function setIsBoardRejected($isBoardRejected)
-    {
-        $this->isBoardRejected = $isBoardRejected;
+        $this->approval2At = $approval2At;
     }
 
     /**
      * @return mixed
      */
-    public function getMpesaVerificationCode()
+    public function getApproval3At()
     {
-        return $this->mpesaVerificationCode;
+        return $this->approval3At;
     }
 
     /**
-     * @param mixed $mpesaVerificationCode
+     * @param mixed $approval3At
      */
-    public function setMpesaVerificationCode($mpesaVerificationCode)
+    public function setApproval3At($approval3At)
     {
-        $this->mpesaVerificationCode = $mpesaVerificationCode;
+        $this->approval3At = $approval3At;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProcessedBy()
+    {
+        return $this->processedBy;
+    }
+
+    /**
+     * @param mixed $processedBy
+     */
+    public function setProcessedBy($processedBy)
+    {
+        $this->processedBy = $processedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProcessedAt()
+    {
+        return $this->processedAt;
+    }
+
+    /**
+     * @param mixed $processedAt
+     */
+    public function setProcessedAt($processedAt)
+    {
+        $this->processedAt = $processedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccountCreated()
+    {
+        return $this->accountCreated;
+    }
+
+    /**
+     * @param mixed $accountCreated
+     */
+    public function setAccountCreated($accountCreated)
+    {
+        $this->accountCreated = $accountCreated;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProfileDocuments()
+    {
+        return $this->profileDocuments;
+    }
+
+    /**
+     * @param mixed $profileDocuments
+     */
+    public function setProfileDocuments($profileDocuments)
+    {
+        $this->profileDocuments = $profileDocuments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTermsOfService()
+    {
+        return $this->termsOfService;
+    }
+
+    /**
+     * @param mixed $termsOfService
+     */
+    public function setTermsOfService($termsOfService)
+    {
+        $this->termsOfService = $termsOfService;
     }
 
 

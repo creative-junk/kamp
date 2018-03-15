@@ -1,17 +1,17 @@
-<h3>Registration Successful!</h3>
+<h3>First Step Complete!</h3>
 <p>
-Dear {{ name }}!
-</p><p>Welcome to the KAMP Online Portal.
+    Dear {{ name }}!
+</p><p>Congratulations.
 </p><p>
-You have successfully completed the first step. To proceed with the registration, click on the link below.
+    You have successfully completed the first step of the registration process. To proceed to the next step, click on the link below.
 </p><p>
-{# example, assuming you have a route named "login" #}
-To login, go to: <a href="http://creative-junk.com/priskportal/web/profile/{{ code }}/update">Click Here</a>.
+    {# example, assuming you have a route named "login" #}
+    To login, go to: <a href="http://kamp.pathchcreate.com/profile/{{ code }}/update">Click Here</a>.
 </p><p>
-Thank you!
+    Thank you!
 </p><p>
---KAMP Team
+    --KAMP Team
 </p><p>
-{# Makes an absolute URL to the loko/images/PRISK_Logo_v_2.2_website.png file #}
-<img src="{{ absolute_url(asset('loko/images/PRISK_Logo_v_2.2_website.png')) }}">
+    {# Makes an absolute URL to the loko/images/PRISK_Logo_v_2.2_website.png file #}
+    <img src="{{ absolute_url(asset('loko/images/PRISK_Logo_v_2.2_website.png')) }}">
 </p>

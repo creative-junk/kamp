@@ -169,7 +169,7 @@ class ProfileRepository extends EntityRepository
             ->andWhere('profile.isPaid = :isPaid')
             ->setParameter(':isPaid',true)
             ->andWhere('profile.profileStatus = :isApproved')
-            ->setParameter(':isApproved','')
+            ->setParameter(':isApproved','Pending')
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrProfiles){
@@ -198,6 +198,22 @@ class ProfileRepository extends EntityRepository
             ->select('count(profile.id)')
             ->andWhere('profile.createdAt > :createdAt')
             ->setParameter('createdAt', new \DateTime('-5 days'))
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProfiles){
+            return $nrProfiles;
+        }else{
+            return 0;
+        }
+    }
+    public function findNrBoardApprovedProfiles(){
+
+        $nrProfiles= $this->createQueryBuilder('profile')
+            ->select('count(profile.id)')
+            ->andWhere('profile.isPaid = :isPaid')
+            ->setParameter(':isPaid',true)
+            ->andWhere('profile.isBoardApproved = :isBoardApproved')
+            ->setParameter(':isBoardApproved',true)
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrProfiles){

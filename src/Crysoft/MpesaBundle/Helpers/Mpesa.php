@@ -250,14 +250,15 @@ class Mpesa
                 'Password' => $this->password,
                 'Timestamp' => $this->timestamp,
                 'TransactionType' => 'CustomerPayBillOnline',
-                'Amount' => $this->amount,
+                'Amount' => '10',
                 'PartyA' => $this->number,
                 'PartyB' => $this->paybillNumber,
                 'PhoneNumber' => $this->number,
-                'CallBackURL' => $this->callbackUrl,
+                'CallBackURL' => $this->callbackUrl.$this->referenceId,
                 'AccountReference' => $this->referenceId,
                 'TransactionDesc' => 'Membership Fee'
             );
+           // var_dump($curl_post_data);exit;
             $data_string = json_encode($curl_post_data);
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -265,57 +266,8 @@ class Mpesa
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
             $response = curl_exec($ch);
-
+            //var_dump($response);exit;
             return $response;
-    }
-
-    /**
-     * Request for the transaction status
-     *
-     * @param $transactionId
-     * @return mixed | \Psr\Http\Message\ResponseInterface
-     */
-    public function requestTransactionStatus($transactionId){
-
-        $encodedPassword = $this->generateEncryptedPassword();
-       $this->generateToken();
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->statusEndPoint);
-        var_dump($transactionId);exit;
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:Bearer ' . $this->accessToken)); //setting custom header
-
-
-        $curl_post_data = array(
-            //Fill in the request parameters with valid values
-            'Initiator' => $this->paybillNumber,
-            'SecurityCredential' => $encodedPassword,
-            'CommandID' => 'TransactionStatusQuery',
-            'TransactionID' => $transactionId,
-            'PartyA' => $this->paybillNumber,
-            'IdentifierType' => '1',
-            'ResultURL' => 'http://creative-junk.com',
-            'QueueTimeOutURL' => 'http://creative-junk.com',
-            'Remarks' => 'Membership Fee',
-            'Occasion' => ' '
-        );
-
-        $data_string = json_encode($curl_post_data);
-
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-
-        $curl_response = curl_exec($curl);
-        if($curl_response === false)
-        {
-            echo 'Curl error: ' . curl_error($curl);
-        }
-        var_dump($curl_response);exit;
-
-        return $curl_response;
-
     }
 
 
@@ -391,7 +343,7 @@ class Mpesa
 
         $cert = 'cert.cer';
         $plainTextPassword ="";
-        $public_key = openssl_pkey_get_public(file_get_contents($cert));
+        /*$public_key = openssl_pkey_get_public(file_get_contents($cert));
         $keyData = openssl_pkey_get_details($public_key);
         //var_dump($keyData['key']);exit;
 
@@ -400,6 +352,33 @@ class Mpesa
         $password=base64_encode($encrypted);
        // var_dump($password);exit;
         return $password;
+        */
 
+        $fp = fopen('cert.cer','r');
+        $public_key_string = fread($fp,8192);
+        fclose($fp);
+        $key_resource = openssl_get_publickey($public_key_string);
+        openssl_public_encrypt($plainTextPassword,$encrypted,$key_resource, OPENSSL_PKCS1_PADDING);
+        $password = base64_encode($encrypted);
+       // var_dump($password);exit;
+
+        return $password;
+
+
+    }
+    /**
+     * Generate a random transaction number
+     *
+     * @return string
+     */
+    public function generateLongTransactionNumber()
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 317; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

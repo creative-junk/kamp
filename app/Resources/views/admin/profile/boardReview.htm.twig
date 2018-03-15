@@ -33,362 +33,239 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div id="content" class="app-content box-shadow-z0" role="main">
-        <div class="app-header white box-shadow">
-            <div class="navbar">
-                <!-- Open side - Naviation on mobile -->
-                <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up">
-                    <i class="material-icons">&#xe5d2;</i>
-                </a>
-                <!-- / -->
-
-                <!-- Page title - Bind to $state's title -->
-                <div class="navbar-item pull-left h5" ng-bind="$state.current.data.title" id="pageTitle"></div>
-
-                <!-- navbar right -->
-                <ul class="nav navbar-nav pull-right">
-                    <li class="nav-item dropdown pos-stc-xs">
-
-
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link clear" href="{{ path('user_logout') }}" data-toggle="dropdown">
-
-                    <i class="fa fa-sign-out"></i>
-                        </a>
-
-                    </li>
-                    <li class="nav-item hidden-md-up">
-                        <a class="nav-link" data-toggle="collapse" data-target="#collapse">
-                            <i class="material-icons">&#xe5d4;</i>
-                        </a>
-                    </li>
-                </ul>
-                <!-- / navbar right -->
-
-                <!-- navbar collapse -->
-                <div class="collapse navbar-toggleable-sm" id="collapse">
-                    <div ui-include="'../views/blocks/navbar.form.right.html'"></div>
-                    <!-- link and dropdown -->
-                    <ul class="nav navbar-nav">
-                        <li class="nav-item"><a href="{{ path('open-profiles') }}"><i class="fa fa-hand-o-left"> </i></a> </li>
-                        <li class="nav-item dropdown">
-                            <h5>Profile Review - {{ profile.fullName }}</h5>
-
-                        </li>
-                    </ul>
-                    <!-- / -->
+    <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" data-background-color="red">
+                    <h4 class="title" style="color: #fff;">Board Profile Review</h4>
+                    <p class="category">Individual Profile Review</p>
                 </div>
-                <!-- / navbar collapse -->
             </div>
         </div>
+        <div id="content" class="app-content box-shadow-z0" role="main">
 
-        <div ui-view class="app-body" id="view">
+            <div ui-view class="app-body" id="view">
 
-            <!-- ############ PAGE START-->
-
-
+                <!-- ############ PAGE START-->
 
 
-            <div class="padding">
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Personal Information</strong></div>
-                    <div class="panel-body">
-                        <div class="row">
+                <div class="padding">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Personal Information</strong></div>
+                        <div class="panel-body">
+                            <div class="row">
 
-                            <div class="col-md-6"><strong>Names:&nbsp;&nbsp; </strong>
-                                {{ profile.prefix }} {{ profile.fullName }}
+                                <div class="col-md-6"><strong>Names:&nbsp;&nbsp; </strong>
+                                    {{ profile.applicantName }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Date Of Birth</strong>
+                                    {% if profile.dateOfBirth %}
+                                        {{ profile.dateOfBirth | date('d/m/Y') }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6"><strong>ID Number:&nbsp;&nbsp; </strong>
+                                    {{ profile.idNumber }}
+                                </div>
+                                <div class="col-md-6"><strong>Gender:&nbsp;&nbsp; </strong>
+
+                                    {{ profile.gender }}
+
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <strong>Date Of Birth</strong>
-                                {% if profile.dateOfBirth %}
-                                    {{ profile.dateOfBirth | date('d/m/Y')  }}
-                                {%  endif %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Nationality:&nbsp;&nbsp; </strong>
-                                {{ profile.nationality }}
-                            </div>
-                            <div class="col-md-6"><strong>Language:&nbsp;&nbsp; </strong>
-                                {{ profile.language }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Marital Status:&nbsp;&nbsp; </strong>
-                                {{ profile.maritalStatus }}
-                            </div>
-                            <div class="col-md-6"><strong>Spouse Name:&nbsp;&nbsp; </strong>
-                                {{ profile.spouseName }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>ID Number:&nbsp;&nbsp; </strong>
-                                {{ profile.idNumber }}
-                            </div>
-                            <div class="col-md-6"><strong>KRA Itax PIN:&nbsp;&nbsp; </strong>
-                                {{ profile.itaxPin }}
-                            </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-6"><strong>Registration Date:&nbsp;&nbsp; </strong>
 
-                        <div class="row">
-                            <div class="col-md-6"><strong>Gender:&nbsp;&nbsp; </strong>
+                                    {{ profile.createdAt | date('d/m/Y') }}
 
-                                {{ profile.gender }}
+                                </div>
+                                <div class="col-md-6"><strong>Status:&nbsp;&nbsp; </strong>
+                                    {% if profile.isPaid %}
+                                        Paid Membership
+                                    {% else %}
+                                        Payment Pending
+                                    {% endif %}
 
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <strong>Rights:&nbsp;&nbsp; </strong>
-                                {% for profileRight in profile.rights %}
-                                    <br/>{{ profileRight }}
+                            <div class="row">
+                                <div class="col-md-6"><strong>Member Number:&nbsp;&nbsp; </strong>
+                                    {% if profile.memberNumber %}
+                                        {{ profile.memberNumber }}
+                                    {% else %}
+                                        Member Number Pending
+                                    {% endif %}
+                                </div>
 
-                                {% endfor %}
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Country of Residence:&nbsp;&nbsp; </strong>
-                                {{ profile.countryOfResidence }}
-                            </div>
-                            <div class="col-md-6"><strong>Source of Data:&nbsp;&nbsp; </strong>
-                                {% if profile.sourceOfData %}
-                                    {{ profile.sourceOfData }}
-                                {% else %}
-                                    Self
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Registration Date:&nbsp;&nbsp; </strong>
-
-                                {{ profile.createdAt | date('d/m/Y')  }}
-
-                            </div>
-                            <div class="col-md-6"><strong>Status:&nbsp;&nbsp; </strong>
-                                {% if profile.isPaid %}
-                                    Paid Membership
-                                {% else %}
-                                    Payment Pending
-                                {% endif %}
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Member Number:&nbsp;&nbsp; </strong>
-                                {% if profile.memberNumber %}
-                                    {{ profile.memberNumber }}
-                                {% else %}
-                                    Member Number Pending
-                                {% endif %}
                             </div>
 
                         </div>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Address Details</strong></div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-6"><strong>Physical Address:&nbsp;&nbsp; </strong>
-                                {{ profile.physicalAddress }}
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Address Details</strong></div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6"><strong>Physical Address:&nbsp;&nbsp; </strong>
+                                    {{ profile.physicalAddress }}
+                                </div>
+                                <div class="col-md-6"><strong>Postal Address:&nbsp;&nbsp; </strong>
+                                    {{ profile.postalAddress }}
+                                </div>
                             </div>
-                            <div class="col-md-6"><strong>Postal Address:&nbsp;&nbsp; </strong>
-                                {{ profile.postalAddress }}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Postal Code:&nbsp;&nbsp; </strong>
+                                    {{ profile.postalCode }}
+
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>City:&nbsp;&nbsp; </strong>
+                                    {{ profile.city }}
+
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Mobile Number:&nbsp;&nbsp; </strong>
+                                    {{ profile.mobileNumber }}
+
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Tel Number:&nbsp;&nbsp; </strong>
+                                    {{ profile.telephoneNumber }}
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Email Address:&nbsp;&nbsp; </strong>
+                                    {{ profile.emailAddress }}
+
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Website:&nbsp;&nbsp; </strong>
+                                    {{ profile.website }}
+
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Bank Details</strong></div>
+                        <div class="panel-body">
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Postal Code:&nbsp;&nbsp; </strong>
-                                {{ profile.postalCode }}
+                            <div class="row">
+                                <div class="col-md-6"><strong>Account Name:&nbsp;&nbsp; </strong>
+                                    {{ profile.accountName }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Account Number:&nbsp;&nbsp; </strong>
+                                    {{ profile.accountNumber }}
 
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <strong>City:&nbsp;&nbsp; </strong>
-                                {{ profile.city }}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Bank:&nbsp;&nbsp; </strong>
+                                    {{ profile.bank }}
 
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Bank Branch:&nbsp;&nbsp; </strong>
+                                    {{ profile.bankBranch }}
+
+                                </div>
                             </div>
+
                         </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Payment Details</strong></div>
+                        <div class="panel-body">
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Country:&nbsp;&nbsp; </strong>
-                                {{ profile.country }}
-
+                            <div class="row">
+                                <div class="col-md-6"><strong>Mpesa Confirmation Code:&nbsp;&nbsp; </strong>
+                                    {{ profile.mpesaConfirmationCode }}
+                                </div>
+                                <div class="col-md-6"><strong>Payment Date:&nbsp;&nbsp; </strong>
+                                    {{ profile.mpesaPaymentDate | date }}
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <strong>Phone Number:&nbsp;&nbsp; </strong>
-                                {{ profile.phoneNumber }}
 
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Mpesa Number:&nbsp;&nbsp; </strong>
+                                    {{ profile.mpesaNumber }}
+
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Amount:&nbsp;&nbsp; </strong>
+                                    Ksh {{ profile.mpesaAmount }}
+
+                                </div>
                             </div>
+
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Alt. Phone Number:&nbsp;&nbsp; </strong>
-                                {{ profile.altPhoneNumber }}
+                    </div>
+                    <!-- Documents -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Documents</strong></div>
+                        <div class="panel-body">
 
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Fax Number:&nbsp;&nbsp; </strong>
-                                {{ profile.faxNumber }}
+                            <div class="row">
+                                <div class="col-md-6">
 
+                                    {% if profile.profileDocuments | length > 0 %}
+                                        <p>This member has submitted the following documents</p>
+                                        <table>
+                                            {% for profileDocument in profile.profileDocuments %}
+                                                <tr>
+                                                    <td width="200">
+                                                        <b><i>{{ profileDocument.documentName }}</i></b>
+                                                    </td>
+                                                    <td width="200">
+                                                        {% if profileDocument.documentFileName|last == 'g' %}
+                                                            <img width="200"
+                                                                 src="{{ asset('assets/documents/') }}{{ profileDocument.documentFileName }}"/>
+                                                        {% else %}
+                                                            <div style="height: 115px;padding-top:30px">
+                                                                <a href="/assets/documents/{{ profileDocument.documentFileName }}">Click
+                                                                    to view</a>
+                                                            </div>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    {% else %}
+                                        <p>This Profile does not have the required Documents</p>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Email Address:&nbsp;&nbsp; </strong>
-                                {{ profile.emailAddress }}
+                            <div class="row">
 
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Website:&nbsp;&nbsp; </strong>
-                                {{ profile.website }}
 
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Bank Details</strong></div>
-                    <div class="panel-body">
+                    <!-- End Documents -->
 
-                        <div class="row">
-                            <div class="col-md-6"><strong>Name of Payee:&nbsp;&nbsp; </strong>
-                                {{ profile.nameOfPayee }}
-                            </div>
-                            <div class="col-md-6"><strong>Account Name:&nbsp;&nbsp; </strong>
-                                {{ profile.accountName }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Bank:&nbsp;&nbsp; </strong>
-                                {{ profile.bank }}
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <strong>Bank Branch:&nbsp;&nbsp; </strong>
-                                {{ profile.bankBranch }}
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Account Number:&nbsp;&nbsp; </strong>
-                                {{ profile.accountNumber }}
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <strong>Currency:&nbsp;&nbsp; </strong>
-                                {{ profile.currency }}
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Account Type:&nbsp;&nbsp; </strong>
-                                {{ profile.bankAccountType }}
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <strong>Bank P.O Box:&nbsp;&nbsp; </strong>
-                                {{ profile.bankPostalAddress }}
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>IBAN:&nbsp;&nbsp; </strong>
-                                {{ profile.iban }}
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <strong>Swift BIC:&nbsp;&nbsp; </strong>
-                                {{ profile.swiftBic }}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
- <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Payment Details</strong></div>
-                    <div class="panel-body">
-
-                        <div class="row">
-                            <div class="col-md-6"><strong>Mpesa Confirmation Code:&nbsp;&nbsp; </strong>
-                                {{ profile.mpesaConfirmationCode }}
-                            </div>
-                            <div class="col-md-6"><strong>Payment Date:&nbsp;&nbsp; </strong>
-                                {{ profile.mpesaPaymentDate | date }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Mpesa Number:&nbsp;&nbsp; </strong>
-                                {{ profile.mpesaNumber }}
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <strong>Amount:&nbsp;&nbsp; </strong>
-                               Ksh  {{ profile.mpesaAmount }}
-
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-                <!-- Documents -->
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Documents</strong></div>
-                    <div class="panel-body">
-
-                        <div class="row">
-                            <div class="col-md-6">
-
-                                {% if profile.profileDocuments | length > 0 %}
-                                    <p>This member has submitted the following documents</p>
-                                    <table>
-                                        {% for profileDocument in profile.profileDocuments %}
-                                            <tr>
-                                                <td width="200">
-                                                    <b><i>{{ profileDocument.documentName }}</i></b>
-                                                </td><td width="200">
-                                                    {% if profileDocument.documentFileName|last == 'g' %}
-                                                        <img width="200" src="{{ asset('assets/documents/') }}{{ profileDocument.documentFileName }}"/>
-                                                    {% else %}
-                                                        <div style="height: 115px;padding-top:30px">
-                                                            <a href="/assets/documents/{{ profileDocument.documentFileName }}">Click to view</a>
-                                                        </div>
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor  %}
-                                    </table>
-                                {% else %}
-                                    <p>This Profile does not have the required Documents</p>
-                                {% endif %}
-                            </div></div>
-                        <div class="row">
-
-
-                        </div>
-                    </div>
-                </div>
-                <!-- End Documents -->
-
-                <!-- Membership Approval -->
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Membership Approval</strong></div>
-                    <div class="panel-body">
+                    <!-- Membership Approval -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Membership Approval</strong></div>
+                        <div class="panel-body">
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -408,143 +285,141 @@
 
                             </div>
                         </div>
-                </div>
-                <!-- End Membership Approval -->
+                    </div>
+                    <!-- End Membership Approval -->
 
-                <!-- Board Approval -->
-                <div class="panel panel-default">
-                    <div class="panel-heading"><strong>Board Approval</strong></div>
-                    <div class="panel-body">
+                    <!-- Board Approval -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><strong>Board Approval</strong></div>
+                        <div class="panel-body">
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                {% if profile.profileStatus == "Rejected" %}
-                                    <strong>Rejected On:</strong> {{ profile.membershipApprovedAt | date("F jS \\a\\t g:ia") }}<br/>
-                                    <strong>Rejected By: </strong> {{ profile.membershipApprovedBy.fullName }}<br/>
-                                    <strong>Reason:</strong> {{ profile.statusDescription }}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {% if profile.profileStatus == "Rejected" %}
+                                        <strong>Rejected On:</strong> {{ profile.membershipApprovedAt | date("F jS \\a\\t g:ia") }}<br/>
+                                        <strong>Rejected By: </strong> {{ profile.membershipApprovedBy.fullName }}<br/>
+                                        <strong>Reason:</strong> {{ profile.statusDescription }}
 
-                                {% else %}
-                                    <!-- Check if Membership has approved -->
-                                    {% if profile.isMembershipApproved and profile.isBoardRejected == false %}
-                                        <!-- Make sure this Board Member hasn't reviewed this Profile Yet -->
-                                        {% if app.user == profile.boardApprover1 or app.user == profile.boardApprover2 or app.user == profile.boardApprover3 %}
+                                    {% else %}
+                                        <!-- Check if Membership has approved -->
+                                        {% if profile.isMembershipApproved and profile.isBoardRejected == false %}
+                                            <!-- Make sure this Board Member hasn't reviewed this Profile Yet -->
+                                            {% if app.user == profile.boardApprover1 or app.user == profile.boardApprover2 or app.user == profile.boardApprover3 %}
 
-                                            <table style="width:100%">
-                                                <tr>
-                                                    <td>
-                                                        {% if profile.boardApprover1 %}
-                                                            <h6>Board Member 1</h6>
-                                                            <strong>Approved On:</strong> {{ profile.approval1At | date("F jS \\a\\t g:ia") }}<br/>
-                                                            <strong>Approved By: </strong> {{ profile.boardApprover1.fullName }}<br/>
-                                                        {% else %}
-                                                            <h6>Board Member 1</h6>
-                                                            <p>Approval Pending</p>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if profile.boardApprover2 %}
-                                                            <h6>Board Member 2</h6>
-                                                            <strong>Approved On:</strong> {{ profile.approval2At | date("F jS \\a\\t g:ia") }}<br/>
-                                                            <strong>Approved By: </strong> {{ profile.boardApprover2.fullName }}<br/>
-                                                        {% else %}
-                                                            <h6>Board Member 2</h6>
-                                                            <p>Approval Pending</p>
-                                                        {% endif %}
+                                                <table style="width:100%">
+                                                    <tr>
+                                                        <td>
+                                                            {% if profile.boardApprover1 %}
+                                                                <h6>Board Member 1</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval1At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover1.fullName }}<br/>
+                                                            {% else %}
+                                                                <h6>Board Member 1</h6>
+                                                                <p>Approval Pending</p>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if profile.boardApprover2 %}
+                                                                <h6>Board Member 2</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval2At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover2.fullName }}<br/>
+                                                            {% else %}
+                                                                <h6>Board Member 2</h6>
+                                                                <p>Approval Pending</p>
+                                                            {% endif %}
 
-                                                    </td>
-                                                    <td>
-                                                        {% if profile.boardApprover3 %}
-                                                            <h6>Board Member 3</h6>
-                                                            <strong>Approved On:</strong> {{ profile.approval3At | date("F jS \\a\\t g:ia") }}<br/>
-                                                            <strong>Approved By: </strong> {{ profile.boardApprover3.fullName }}<br/>
-                                                        {% else %}
-                                                            <h6>Board Member 3</h6>
-                                                            <p>Approval Pending</p>
-                                                        {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if profile.boardApprover3 %}
+                                                                <h6>Board Member 3</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval3At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover3.fullName }}<br/>
+                                                            {% else %}
+                                                                <h6>Board Member 3</h6>
+                                                                <p>Approval Pending</p>
+                                                            {% endif %}
 
-                                                    </td>
-                                                </tr>
-                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            {% else %}
+                                                <table style="width: 100%">
+                                                    <tr>
+                                                        <td>
+                                                            {% if profile.boardApprover1 %}
+                                                                <h6>Board Member 1</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval1At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover1.fullName }}<br/>
+                                                            {% else %}
+                                                                {{ form_start(boardReviewForm) }}
+                                                                <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
+                                                                <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
+                                                                <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
+                                                                <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
+                                                                {{ form_end(boardReviewForm) }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if profile.boardApprover2 %}
+                                                                <h6>Board Member 2</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval2At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover2.fullName }}<br/>
+                                                            {% elseif profile.boardApprover1 %}
+                                                                <h6>Board Member 2</h6>
+                                                                {{ form_start(boardReviewForm) }}
+                                                                <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
+                                                                <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
+                                                                <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
+                                                                <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
+                                                                {{ form_end(boardReviewForm) }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        <td>
+                                                            {% if profile.boardApprover3 %}
+                                                                <h6>Board Member 3</h6>
+                                                                <strong>Approved On:</strong> {{ profile.approval3At | date("F jS \\a\\t g:ia") }}<br/>
+                                                                <strong>Approved By: </strong> {{ profile.boardApprover3.fullName }}<br/>
+                                                            {% elseif profile.boardApprover2 %}
+                                                                <h6>Board Member 3</h6>
+                                                                {{ form_start(boardReviewForm) }}
+                                                                <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
+                                                                <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
+                                                                <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
+                                                                <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
+                                                                {{ form_end(boardReviewForm) }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                </table>
+
+
+                                            {% endif %}
+                                        {% elseif profile.isBoardRejected == true %}
+                                            <p>Profile Rejected</p>
+                                            <strong>Rejected On:</strong> {{ profile.boardRejectionAt | date("F jS \\a\\t g:ia") }}<br/>
+                                            <strong>Rejected By: </strong> {{ profile.boardRejectionBy.fullName }}<br/>
+                                            <strong>Reason:</strong> {{ profile.boardRejectionReason }}
                                         {% else %}
-                                            <table style="width: 100%">
-                                                <tr>
-                                                    <td>
-                                                        {% if profile.boardApprover1 %}
-                                                        <h6>Board Member 1</h6>
-                                                        <strong>Approved On:</strong> {{ profile.approval1At | date("F jS \\a\\t g:ia") }}<br/>
-                                                        <strong>Approved By: </strong> {{ profile.boardApprover1.fullName }}<br/>
-                                                        {% else %}
-                                                            {{ form_start(boardReviewForm) }}
-                                                            <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
-                                                            <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
-                                                            <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
-                                                            <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
-                                                            {{ form_end(boardReviewForm) }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                     {% if profile.boardApprover2 %}
-                                                        <h6>Board Member 2</h6>
-                                                        <strong>Approved On:</strong> {{ profile.approval2At | date("F jS \\a\\t g:ia") }}<br/>
-                                                        <strong>Approved By: </strong> {{ profile.boardApprover2.fullName }}<br/>
-                                                     {% elseif profile.boardApprover1 %}
-                                                         <h6>Board Member 2</h6>
-                                                         {{ form_start(boardReviewForm) }}
-                                                         <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
-                                                         <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
-                                                         <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
-                                                         <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
-                                                         {{ form_end(boardReviewForm) }}
-                                                      {% else %}
-                                                      {% endif %}
-                                                    <td>
-                                                         {% if profile.boardApprover3 %}
-                                                        <h6>Board Member 3</h6>
-                                                        <strong>Approved On:</strong> {{ profile.approval3At | date("F jS \\a\\t g:ia") }}<br/>
-                                                        <strong>Approved By: </strong> {{ profile.boardApprover3.fullName }}<br/>
-                                                         {% elseif profile.boardApprover2 %}
-                                                             <h6>Board Member 3</h6>
-                                                             {{ form_start(boardReviewForm) }}
-                                                             <textarea type="text" name="comment" placeholder="Comment"></textarea><br/><br/>
-                                                             <input type="radio" name="approval" checked value="Approved"> Approve&nbsp;
-                                                             <input type="radio" name="approval" value="denied">&nbsp;Deny<br/><br/>
-                                                             <button class="btn btn-primary" type="submit"><i class="fa fa-edit"></i> Submit</button>
-                                                             {{ form_end(boardReviewForm) }}
-                                                         {% else %}
-                                                         {% endif %}
-                                                    </td>
-                                                </tr>
-                                            </table>
-
+                                            <p>Pending Membership Approval</p>
 
                                         {% endif %}
-                                    {% elseif profile.isBoardRejected == true %}
-                                        <p>Profile Rejected</p>
-                                        <strong>Rejected On:</strong> {{ profile.boardRejectionAt | date("F jS \\a\\t g:ia") }}<br/>
-                                        <strong>Rejected By: </strong> {{ profile.boardRejectionBy.fullName }}<br/>
-                                        <strong>Reason:</strong> {{ profile.boardRejectionReason }}
-                                    {% else %}
-                                        <p>Pending Membership Approval</p>
-
                                     {% endif %}
-                                {% endif %}
-                            </div></div>
-                        <div class="row">
+                                </div></div>
+                            <div class="row">
 
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- End Board Approval -->
+                    <!-- End Board Approval -->
 
-                    </div>
-                </div>
 
                 </div>
             </div>
 
-            <!-- ############ PAGE END-->
-
         </div>
+
     </div>
+
 {% endblock %}

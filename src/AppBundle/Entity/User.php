@@ -68,14 +68,6 @@ class User implements UserInterface
      */
     private $isPasswordCreated;
     /**
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Profile",inversedBy="whoseProfile")
-     */
-    private $myProfile;
-    /**
-     * @ORM\Column(type="datetime",nullable=true)
-     */
-    private $profileLinkedAt;
-    /**
      * @ORM\Column(type="datetime",nullable=true)
      */
     private $accountCreatedAt;
@@ -302,38 +294,6 @@ class User implements UserInterface
 
     public function getFullName(){
         return trim($this->getFirstName() . ' ' . $this->getLastName());
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMyProfile()
-    {
-        return $this->myProfile;
-    }
-
-    /**
-     * @param mixed $myProfile
-     */
-    public function setMyProfile($myProfile)
-    {
-        $this->myProfile = $myProfile;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProfileLinkedAt()
-    {
-        return $this->profileLinkedAt;
-    }
-
-    /**
-     * @param mixed $profileLinkedAt
-     */
-    public function setProfileLinkedAt($profileLinkedAt)
-    {
-        $this->profileLinkedAt = $profileLinkedAt;
     }
 
     /**

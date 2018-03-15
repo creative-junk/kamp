@@ -3,9 +3,11 @@
 namespace AppBundle\Controller\Admin;
 
 
+use AppBundle\Entity\CorporateProfile;
 use AppBundle\Entity\NextOfKin;
 use AppBundle\Entity\Profile;
 use AppBundle\Entity\User;
+use AppBundle\Form\CorporateReviewForm;
 use AppBundle\Form\NewAdministratorForm;
 use AppBundle\Form\ProfileReviewForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,86 +26,124 @@ use WhiteOctober;
 class MemberController extends Controller
 {
     /**
-     * @Route("/",name="admin-home")
+     * @Route("/",name="admin-dashboard")
      */
     public function dashboardAction()
     {
         $em = $this->getDoctrine()->getManager();
 
-        $nrOnboards = $em->getRepository("AppBundle:Onboard")
+        //Basic Profiles
+        $nrCorporate = $em->getRepository("AppBundle:Onboard")
             ->findNrOnboards();
-        $nrProfiles = $em->getRepository("AppBundle:Profile")
-            ->findNrProfiles();
-        $nrApproved = $em->getRepository("AppBundle:Profile")
-            ->findNrApproved();
-        $nrRejected = $em->getRepository("AppBundle:Profile")
-            ->findNrRejected();
-        $nrUnderReview = $em->getRepository("AppBundle:Profile")
-            ->findNrUnderReview();
-        $nrUnpaidProfiles = $em->getRepository("AppBundle:Profile")
-            ->findNrUnpaidProfiles();
-        $nrNew = $em->getRepository("AppBundle:Profile")
-            ->findNrNew();
-        $nrPendingAccounts = $em->getRepository("AppBundle:User")
-            ->findNrPendingUsers();
+        $nrIndividual = $em->getRepository("AppBundle:Individual")
+            ->findNrOnboards();
 
-        $openProfiles = $em->getRepository("AppBundle:Profile")
-            ->findAllOpenProfilesOrderByDate();
-        $unpaidProfiles = $em->getRepository("AppBundle:Profile")
-            ->findAllUnpaidProfilesOrderByDate();
-        $users = $em->getRepository("AppBundle:User")
-            ->findAllUsers();
-        $recordings = $em->getRepository("AppBundle:Recording")
-            ->findAllRecordings();
-        $pendingUsers = $em->getRepository("AppBundle:User")
-            ->findAllPendingUsers();
+        //Pending Profiles
+        $nrPendingIndividual = $em->getRepository("AppBundle:Profile")
+            ->findNrUnderReview();
+        $nrPendingCorporate = $em->getRepository("AppBundle:CorporateProfile")
+            ->findNrUnderReview();
+
+        //Membership Approved
+        $nrMembershipApproved = $em->getRepository("AppBundle:Profile")
+            ->findNrApproved();
+        $nrMembershipApprovedCorporates = $em->getRepository("AppBundle:CorporateProfile")
+            ->findNrApproved();
+
+        //Board Approved
+        $nrBoardApproved = $em->getRepository("AppBundle:Profile")
+            ->findNrBoardApprovedProfiles();
+        $nrBoardApprovedCorporates = $em->getRepository("AppBundle:CorporateProfile")
+            ->findNrBoardApprovedProfiles();
 
         return $this->render('admin/dashboard.htm.twig',[
-            'nrOnboards'=> $nrOnboards,
-            'nrProfiles'=> $nrProfiles,
-            'nrApproved' => $nrApproved,
-            'nrRejected' => $nrRejected,
-            'nrUnderReview'=> $nrUnderReview,
-            'nrUnpaidProfiles'=>$nrUnpaidProfiles,
-            'nrNew' => $nrNew,
-            'openProfiles'=>$openProfiles,
-            'unpaidProfiles' => $unpaidProfiles,
-            'users'=>$users,
-            'recordings'=>$recordings,
-            'pendingAccounts'=>$pendingUsers,
-            'nrPendingAccounts' => $nrPendingAccounts
+            'nrCorporate'=> $nrCorporate,
+            'nrIndividual'=>$nrIndividual,
+            'nrPendingIndividual'=> $nrPendingIndividual,
+            'nrPendingCorporate' => $nrPendingCorporate,
+            'nrMembershipApproved' => $nrMembershipApproved,
+            'nrMembershipApprovedCorporates'=> $nrMembershipApprovedCorporates,
+            'nrBoardApproved'=>$nrBoardApproved,
+            'nrBoardApprovedCorporates' => $nrBoardApprovedCorporates
         ]);
     }
 
     /**
-     * @Route("/users/onboard/step1",name="new-users")
+     * @Route("/onboard/corporate/step1",name="new-users")
      */
     public function onBoardAction(){
         $em = $this->getDoctrine()->getManager();
 
         $users = $em->getRepository("AppBundle:Onboard")
-            ->findAllUsers();
+            ->findBy([
+
+            ],
+                [
+                    'createdAt'=>'Asc'
+                ]);
 
         return $this->render('admin/step-1-users.htm.twig',[
             'users' => $users
         ]);
     }
+    /**
+     * @Route("/onboard/individual/step1",name="new-individual-users")
+     */
+    public function onBoardIndividualAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository("AppBundle:Individual")
+            ->findBy([
+
+            ],
+                [
+                    'createdAt'=>'Asc'
+                ]);
+
+        return $this->render('admin/step-1-individual.htm.twig',[
+            'users' => $users
+        ]);
+    }
 
     /**
-     * @Route("/users/onboard/step2",name="open-profiles")
+     * @Route("/onboard/individual/step2",name="open-profiles")
      */
     public function profileAction(){
         $em = $this->getDoctrine()->getManager();
 
         $users = $em->getRepository("AppBundle:Profile")
-            ->findAllOpenProfilesOrderByDate();
+            ->findBy([
+                'profileStatus'=>'Pending'
+            ],
+                [
+                    'createdAt'=>'Desc'
+                ]);
 
         return $this->render('admin/open-profiles.htm.twig',[
             'users'=>$users
         ]);
     }
     /**
-     * @Route("/users/profiles/step1",name="membership-approved-profiles")
+     * @Route("/onboard/corporate/step2",name="open-corporate-profiles")
+     */
+    public function corporateProfileAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository("AppBundle:CorporateProfile")
+            ->findBy([
+                'profileStatus'=>'Pending'
+            ],
+                [
+                    'createdAt'=>'Desc'
+                ]);
+
+        return $this->render('admin/open-corporate-profiles.htm.twig',[
+            'users'=>$users
+        ]);
+    }
+
+    /**
+     * @Route("/approved/profiles/individual",name="membership-approved-profiles")
      */
     public function membershipApprovedProfileAction(){
         $em = $this->getDoctrine()->getManager();
@@ -111,13 +151,26 @@ class MemberController extends Controller
         $users = $em->getRepository("AppBundle:Profile")
             ->findAllMembershipApprovedProfilesOrderByDate();
 
-        return $this->render('admin/step-2-users.htm.twig',[
+        return $this->render('admin/step-2-individual.htm.twig',[
+            'users'=>$users
+        ]);
+    }
+    /**
+     * @Route("/approved/membership/corporates",name="membership-approved-corporates")
+     */
+    public function membershipApprovedCorporatesAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository("AppBundle:CorporateProfile")
+            ->findAllMembershipApprovedProfilesOrderByDate();
+
+        return $this->render('admin/step-2-corporate.htm.twig',[
             'users'=>$users
         ]);
     }
 
     /**
-     * @Route("/users/profiles/step2",name="board-approved-users")
+     * @Route("/approved/board/individual",name="board-approved-users")
      */
     public function approvedProfileAction(){
         $em = $this->getDoctrine()->getManager();
@@ -129,6 +182,20 @@ class MemberController extends Controller
             'users'=>$users
         ]);
     }
+    /**
+     * @Route("/approved/board/corporates",name="board-approved-corporates")
+     */
+    public function approvedCorporateAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository("AppBundle:Profile")
+            ->findAllBoardApprovedProfilesOrderByDate();
+
+        return $this->render('admin/boardApproved-corporates.htm.twig',[
+            'users'=>$users
+        ]);
+    }
+
     /**
      * @Route("/members",name="members")
      */
@@ -186,7 +253,7 @@ class MemberController extends Controller
         if ($form->isValid() && $form->isSubmitted()){
             $comment = $request->request->get('comment');
             $approval = $request->request->get('approval');
-
+           // var_dump($approval);exit;
             if ($approval =="Approved"){
                 $profile->setProfileStatus("Approved");
                 $profile->setIsMembershipApproved(true);
@@ -204,6 +271,56 @@ class MemberController extends Controller
                 $twigTemplate = "rejected.htm.twig";
                 $accountStatus = "Prisk Portal Profile Status";
             }
+            $profile->setStatusDescription($comment);
+            $profile->setProcessedBy($user);
+            $profile->setProcessedAt(new \DateTime());
+
+            $em->persist($profile);
+            $em->flush();
+
+         //   $this->sendEmail($profile->getFirstName(),$accountStatus,$profile->getEmailAddress(),$twigTemplate,null);
+
+       //     return $this->redirectToRoute('open-profiles');
+        }
+        return $this->render('admin/profile/review.htm.twig',[
+            'profile'=>$profile,
+            'profileReviewForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/corporate/profile/{id}/review",name="review-corporate-profile")
+     */
+    public function reviewCorporateProfileAction(Request $request, CorporateProfile $profile){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(CorporateReviewForm::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()){
+            $comment = $request->request->get('comment');
+            $approval = $request->request->get('approval');
+
+            if ($approval =="Approved"){
+                $profile->setProfileStatus("Approved");
+                $profile->setIsMembershipApproved(true);
+                $profile->setMembershipApprovedAt(new \DateTime());
+                $profile->setMembershipApprovedBy($user);
+
+                $twigTemplate = "membershipApproved.htm.twig";
+                $accountStatus = "Kamp Portal Profile Approved";
+            }else{
+                $profile->setProfileStatus("Rejected");
+                $profile->setIsMembershipApproved(false);
+                $profile->setMembershipApprovedBy($user);
+                $profile->setMembershipApprovedAt(new \DateTime());
+
+                $twigTemplate = "rejected.htm.twig";
+                $accountStatus = "Kamp Portal Profile Status";
+            }
 
             $profile->setStatusDescription($comment);
             $profile->setProcessedBy($user);
@@ -212,11 +329,11 @@ class MemberController extends Controller
             $em->persist($profile);
             $em->flush();
 
-            $this->sendEmail($profile->getFirstName(),$accountStatus,$profile->getEmailAddress(),$twigTemplate,null);
+            $this->sendEmail($profile->getFirstDirectorNames(),$accountStatus,$profile->getEmailAddress(),$twigTemplate,null);
 
-            return $this->redirectToRoute('open-profiles');
+            return $this->redirectToRoute('open-corporate-profiles');
         }
-        return $this->render('admin/profile/review.htm.twig',[
+        return $this->render('admin/profile/corporate-review.htm.twig',[
             'profile'=>$profile,
             'profileReviewForm' => $form->createView()
         ]);
@@ -288,7 +405,6 @@ class MemberController extends Controller
 
         return new Response(null, 204);
     }
-
 
     /**
      * @Route("/user/account/{id}/reset",name="request-password-reset")
@@ -429,4 +545,153 @@ class MemberController extends Controller
 
 
     }
+    /**
+     * @Route("/board/profile/{id}/review",name="board-review-profile")
+     */
+    public function boardProfileReviewAction(Request $request, Profile $profile){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ProfileReviewForm::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()){
+
+            $comment = $request->request->get('comment');
+            $approval = $request->request->get('approval');
+
+            if ($approval =="Approved"){
+
+                $nrApprovals = $profile->getNrBoardApprovals();
+
+                if ($nrApprovals == 0 || $nrApprovals == ""){
+                    $nrApprovals =1;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover1($user);
+                    $profile->setApproval1At(new \DateTime());
+                    $profile->setBoardApprovalStatus1("Approved");
+                }elseif ($nrApprovals == 1){
+                    $nrApprovals =2;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover2($user);
+                    $profile->setApproval2At(new \DateTime());
+                    $profile->setBoardApprovalStatus2("Approved");
+                }elseif ($nrApprovals == 2){
+                    $nrApprovals =3;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover3($user);
+                    $profile->setApproval3At(new \DateTime());
+                    $profile->setBoardApprovalStatus3("Approved");
+                    $profile->setIsBoardApproved(true);
+                }
+
+                $twigTemplate = "boardApproved.htm.twig";
+                $accountStatus = "KAMP Membership Approved";
+            }else{
+                $profile->setIsBoardApproved(false);
+                $profile->setIsBoardRejected(true);
+                $profile->setBoardRejectionAt(new \DateTime());
+                $profile->setBoardRejectionBy($user);
+                $profile->setBoardRejectionReason($comment);
+
+                $twigTemplate = "rejected.htm.twig";
+                $accountStatus = "KAMP Portal Profile Status";
+            }
+
+            $profile->setStatusDescription($comment);
+            $profile->setProcessedBy($user);
+            $profile->setProcessedAt(new \DateTime());
+
+            $em->persist($profile);
+            $em->flush();
+
+            //If All Board Members have approved, notify the user
+            if ($profile->getNrBoardApprovals()==3) {
+                $this->sendEmail($profile->getFirstName(), $accountStatus, $profile->getEmailAddress(), $twigTemplate, null);
+            }
+           // return $this->redirectToRoute('membership-approved-profiles');
+        }
+        return $this->render('admin/profile/boardReview.htm.twig',[
+            'profile'=>$profile,
+            'boardReviewForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/board/corporate/{id}/review",name="board-review-corporate")
+     */
+    public function boardCorporateReviewAction(Request $request, CorporateProfile $profile){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(CorporateReviewForm::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()){
+
+            $comment = $request->request->get('comment');
+            $approval = $request->request->get('approval');
+
+            if ($approval =="Approved"){
+
+                $nrApprovals = $profile->getNrBoardApprovals();
+
+                if ($nrApprovals == 0 || $nrApprovals == ""){
+                    $nrApprovals =1;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover1($user);
+                    $profile->setApproval1At(new \DateTime());
+                    $profile->setBoardApprovalStatus1("Approved");
+                }elseif ($nrApprovals == 1){
+                    $nrApprovals =2;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover2($user);
+                    $profile->setApproval2At(new \DateTime());
+                    $profile->setBoardApprovalStatus2("Approved");
+                }elseif ($nrApprovals == 2){
+                    $nrApprovals =3;
+                    $profile->setNrBoardApprovals($nrApprovals);
+                    $profile->setBoardApprover3($user);
+                    $profile->setApproval3At(new \DateTime());
+                    $profile->setBoardApprovalStatus3("Approved");
+                    $profile->setIsBoardApproved(true);
+                }
+
+                $twigTemplate = "boardApproved.htm.twig";
+                $accountStatus = "KAMP Membership Approved";
+            }else{
+                $profile->setIsBoardApproved(false);
+                $profile->setIsBoardRejected(true);
+                $profile->setBoardRejectionAt(new \DateTime());
+                $profile->setBoardRejectionBy($user);
+                $profile->setBoardRejectionReason($comment);
+
+                $twigTemplate = "rejected.htm.twig";
+                $accountStatus = "KAMP Portal Profile Status";
+            }
+
+            $profile->setStatusDescription($comment);
+            $profile->setProcessedBy($user);
+            $profile->setProcessedAt(new \DateTime());
+
+            $em->persist($profile);
+            $em->flush();
+
+            //If All Board Members have approved, notify the user
+            if ($profile->getNrBoardApprovals()==3) {
+                $this->sendEmail($profile->getFirstName(), $accountStatus, $profile->getEmailAddress(), $twigTemplate, null);
+            }
+            // return $this->redirectToRoute('membership-approved-profiles');
+        }
+        return $this->render('admin/profile/corporateBoardReview.htm.twig',[
+            'profile'=>$profile,
+            'boardReviewForm' => $form->createView()
+        ]);
+    }
+
 }

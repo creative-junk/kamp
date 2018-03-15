@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Individual;
 use AppBundle\Entity\Onboard;
 use AppBundle\Entity\Profile;
 use AppBundle\Form\CorporateForm;
+use AppBundle\Form\IndividualForm;
 use AppBundle\Form\OnboardForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,11 +26,9 @@ class OnboardController extends Controller
      */
     public function individualAction(Request $request)
     {
-        $onboard = new Onboard();
-        $onboard->setCreatedAt(new \DateTimeImmutable());
-        $onboard->setCompanyType("Individual");
-        $onboard->setcompanyName("Individual");
-        $form = $this->createForm(OnboardForm::class,$onboard);
+        $individual = new Individual();
+        $individual->setCreatedAt(new \DateTimeImmutable());
+        $form = $this->createForm(IndividualForm::class,$individual);
         $form->handleRequest($request);
 
         if($form->isValid()){
@@ -85,13 +85,13 @@ class OnboardController extends Controller
 
     public function sendWelcomeEmail($firstName,$emailAddress,$code){
         $message = \Swift_Message::newInstance()
-            ->setSubject('PRISK Online Portal Registration')
-            ->setFrom('prisk@creative-junk.com','PRISK Online Portal Team')
+            ->setSubject('KAMP Online Portal Registration')
+            ->setFrom('kamp@patchcreate.com','KAMP Online Portal Team')
             ->setTo($emailAddress)
             ->setBody(
                 $this->renderView(
                 // app/Resources/views/Emails/onboard.htm.twig
-                    'Emails/onboard.htm.twig',
+                    'Emails/corporate.htm.twig',
                     array(
                         'name' => $firstName,
                         'code' => $code

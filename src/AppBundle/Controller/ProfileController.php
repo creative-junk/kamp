@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\CorporateProfile;
 use AppBundle\Entity\Documents;
+use AppBundle\Entity\Individual;
 use AppBundle\Entity\Onboard;
 use AppBundle\Entity\Profile;
 use AppBundle\Form\CorporateProfileForm;
@@ -16,7 +18,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Test\Fixture\Entity\Shop\Product;
 
 class ProfileController extends Controller
 {
@@ -31,25 +32,17 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/{id}/update")
      */
-    public function profileAction(Request $request, Onboard $onboard)
+    public function profileAction(Request $request, Individual $individual)
     {
         $profile = new Profile();
-        $profile->setFirstName($onboard->getFirstName());
-        $profile->setLastName($onboard->getLastName());
-        $profile->setIdNumber($onboard->getIdNumber());
-        $profile->setcompanyName($onboard->getcompanyName());
-        $profile->setCompanyType($onboard->getCompanyType());
-        $profile->setEmailAddress($onboard->getEmail());
+        $profile->setApplicantName($individual->getFirstName().' '.$individual->getLastName());
+        $profile->setIdNumber($individual->getIdNumber());
+        $profile->setEmailAddress($individual->getEmail());
         $profile->setProfileStatus("Pending");
-        $profile->setRegistrationDate(new \DateTime());
-        $profile->setSourceOfData("Self");
         $profile->setCreatedAt(new \DateTimeImmutable());
 
-        if ($onboard->getCompanyType()=="Individual") {
-            $form = $this->createForm(ProfileForm::class, $profile);
-        }else{
-            $form = $this->createForm(CorporateProfileForm::class, $profile);
-        }
+         $form = $this->createForm(ProfileForm::class, $profile);
+
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -60,7 +53,9 @@ class ProfileController extends Controller
             $em->flush();
             if ($payment == 'pay') {
         //        $this->sendWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
-                $this->container->get('session')->set('profile', $profile);
+                $this->container->get('session')->set('profile', $profile->getId());
+                $this->container->get('session')->set('type','user');
+
                 return $this->redirectToRoute('pay_mpesa');
 
             } else {
@@ -70,13 +65,57 @@ class ProfileController extends Controller
         } else {
             $errors = $form->getErrors();
         }
-        if ($onboard->getCompanyType()=="Individual") {
-            return $this->render(':profile:new.htm.twig', ['profileForm' => $form->createView(), 'profile' => $profile, 'errors' => $errors]);
-        }else{
-            return $this->render(':profile:newCorporate.htm.twig', ['profileForm' => $form->createView(), 'profile' => $profile, 'errors' => $errors]);
+            return $this->render(':profile:new.htm.twig', [
+                'profileForm' => $form->createView(),
+                'profile' => $profile,
+                'errors' => $errors
+            ]);
+
+    }
+    /**
+     * @Route("/corporate/{id}/update",name="update-profile")
+     */
+    public function corporateProfileAction(Request $request, Onboard $onboard)
+    {
+        $profile = new CorporateProfile();
+        $profile->setCompanyType($onboard->getCompanyType());
+        $profile->setCompanyName($onboard->getCompanyName());
+        $profile->setFirstDirectorNames($onboard->getFirstDirectorNames());
+        $profile->setFirstDirectorIdNumber($onboard->getFirstDirectorId());
+        $profile->setEmailAddress($onboard->getEmail());
+        $profile->setProfileStatus("Pending");
+        $profile->setRegistrationDate(new \DateTime());
+        $profile->setCreatedAt(new \DateTimeImmutable());
+
+        $form = $this->createForm(CorporateProfileForm::class, $profile);
+
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $profile = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $payment = $request->request->get('payment');
+            $em->persist($profile);
+            $em->flush();
+            if ($payment == 'pay') {
+                $this->sendWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
+                $this->container->get('session')->set('profile', $profile->getId());
+                $this->container->get('session')->set('type','corporate');
+                return $this->redirectToRoute('pay_mpesa');
+
+            } else {
+                //          $this->sendUnpaidWelcomeEmail($onboard->getfirstName(), $onboard->getEmail(), $onboard->getId());
+                return $this->redirectToRoute('profile_updated', array('profileId' => $profile->getId()));
+            }
+        } else {
+            $errors = $form->getErrors();
+        }
+            return $this->render(':profile:newCorporate.htm.twig', [
+                'profileForm' => $form->createView(),
+                'profile' => $profile,
+                'errors' => $errors
+            ]);
 
         }
-    }
 
     /**
      * @Route("/profile/mpesa/pay",name="pay_mpesa")
@@ -84,15 +123,27 @@ class ProfileController extends Controller
     public function mpesaPayAction(Request $request)
     {
         $profile = $this->container->get('session')->get('profile');
+        $type = $this->container->get('session')->get('type');
         $em = $this->getDoctrine()->getManager();
-        $userProfile = $em->getRepository("AppBundle:Profile")->findOneBy(['id' => $profile->getId()]);
+        if ($type=="corporate") {
+            $userProfile = $em->getRepository("AppBundle:CorporateProfile")->findOneBy(['id' => $profile]);
+        }else{
+            $userProfile = $em->getRepository("AppBundle:Profile")->findOneBy(['id' => $profile]);
+        }
+       // var_dump($type);exit;
         $form = $this->createForm(MpesaFormType::class, $userProfile);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->container->get('session')->set('profile', $userProfile);
+           // $this->container->get('session')->set('profile', $userProfile);
             $amount = 10;
-            $phoneNumber = $form["phoneNumber"]->getData();
-            $referenceId = $userProfile->getIdNumber();
+            $phoneNumber = $form["mobileNumber"]->getData();
+            if ($type=="corporate") {
+                $referenceId=$userProfile->getFirstDirectorIdNumber();
+            }else{
+                $referenceId=$userProfile->getIdNumber();
+            }
+            //$referenceId = $userProfile->getIdNumber();
             $mpesa = new Mpesa($this->container);
             $transactionId = $mpesa->generateTransactionNumber();
             $this->container->get('session')->set('transactionId',$transactionId);
@@ -104,6 +155,7 @@ class ProfileController extends Controller
         }
         return $this->render('profile/pay.htm.twig', ['profile' => $userProfile, 'mpesaForm' => $form->createView()]);
     }
+
 
     /**
      * @Route("/profile/mpesa/complete-payment",name="mpesa_paid")
@@ -126,50 +178,40 @@ class ProfileController extends Controller
      */
     public function completePaymentAction(Request $request)
     {
-        $mpesa = new Mpesa($this->container);
+
         $profile = $this->container->get('session')->get('profile');
-
-        $transactionId = $this->container->get('session')->get('transactionId');
-
+        $type = $this->container->get('session')->get('type');
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository("AppBundle:Profile")->findOneBy(['id' => $profile->getId()]);
-        $response = $mpesa->requestTransactionStatus($transactionId);
-
-        //var_dump($response);exit;
-        $mpesaStatus = new MpesaStatus($response);
-        $customerNumber = $mpesaStatus->getCustomerNumber();
-        $transactionAmount = $mpesaStatus->getTransactionAmount();
-        $transactionStatus = $mpesaStatus->getTransactionStatus();
-        $transactionDate = $mpesaStatus->getTransactionDate();
-        $mPesaTransactionId = $mpesaStatus->getMpesaTransactionId();
-        $merchantTransactionId = $mpesaStatus->getMerchantTransactionId();
-        $transactionDescription = $mpesaStatus->getTransactionDescription();
-        if ($transactionStatus == "Success") {
-            $success = "Success";
-            $user->setMpesaConfirmationCode($mPesaTransactionId);
-            $user->setMpesaDescription($transactionDescription);
-            $user->setMpesaPaymentDate(new \DateTime($transactionDate));
-            $user->setMpesaStatus($transactionStatus);
-            $user->setIsPaid(true);
-            $user->setMpesaNumber($customerNumber);
-            $user->setMpesaAmount($transactionAmount);
-            $em->persist($user);
-            $em->flush();
-            $transactionArray = array("a" => $mPesaTransactionId, "b" => $transactionDate, "c" => $customerNumber, "d" => $transactionAmount);
-            /* $transactionCode ='<b>Mpesa Confirmation Code:<b>'..'<br/>
-             <b>Mpesa Payment Date:<b>'..'<br/>
-             <b>Mpesa Number:</b>'..'<br/>
-             <b>Amount:</b>'.;*/
-            $this->sendPaymentEmail($user->getFirstName(), $user->getEmailAddress(), $transactionArray);
-
-        } else {
-            $success = "Failed";
-
+        if ($type=="corporate") {
+            $user = $em->getRepository("AppBundle:CorporateProfile")->findOneBy(['id' => $profile]);
+            $sole =$user->getCompanyType();
+        }else{
+            $user = $em->getRepository("AppBundle:Profile")->findOneBy(['id' => $profile]);
+            $sole="Individual";
         }
+        if ($user->getMpesaStatus()=="Success"){
+            $success="Success";
+            if ($type=="corporate") {
+                $this->sendVerificationEmail($user->getCompanyName(),$user->getEmailAddress(),$user->getId());
+                if ($user->getCompanyType()=="Sole Proprietorship"){
+                    $corporateType=false;
+                }else{
+                    $corporateType=true;
+                }
+                $this->sendCorporateDocumentsEmail($user->getCompanyName(),$user->getEmailAddress(),$user->getId(),$corporateType);
+            }else{
+                $this->sendVerificationEmail($user->getFirstDirectorNames(),$user->getEmailAddress(),$user->getId());
+                $this->sendDocumentsEmail($user->getFirstDirectorNames(),$user->getEmailAddress(),$user->getId());
+            }
+        }else{
+            $success="Failed";
+        }
+
         return $this->render(':profile:verification.htm.twig', [
             'profile' => $user,
             'success' => $success,
-            'transactionId'=>$transactionId
+            'type'=>$type,
+            'sole'=>$sole
         ]);
     }
     /**
@@ -285,20 +327,32 @@ class ProfileController extends Controller
     }
     public function sendVerificationEmail($firstName, $emailAddress, $code)
     {
-        $message = \Swift_Message::newInstance()->setSubject('PRISK Online Portal Profile')->setFrom('portal@prisk.or.ke', 'PRISK Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
             'Emails/paid.htm.twig', array('name' => $firstName, 'code' => $code)), 'text/html');
+        $this->get('mailer')->send($message);
+    }
+    public function sendDocumentsEmail($firstName, $emailAddress, $code)
+    {
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+            'Emails/documents.htm.twig', array('name' => $firstName, 'code' => $code)), 'text/html');
+        $this->get('mailer')->send($message);
+    }
+    public function sendCorporateDocumentsEmail($firstName, $emailAddress, $code,$corporate)
+    {
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+            'Emails/documents.htm.twig', array('name' => $firstName, 'code' => $code,'corporate'=>$corporate)), 'text/html');
         $this->get('mailer')->send($message);
     }
     public function sendPaymentEmail($firstName, $emailAddress, $code)
     {
-        $message = \Swift_Message::newInstance()->setSubject('PRISK Online Portal Profile')->setFrom('portal@prisk.or.ke', 'PRISK Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
                 'Emails/paid.htm.twig', array('name' => $firstName, 'code' => $code)), 'text/html');
         $this->get('mailer')->send($message);
     }
 
     public function sendWelcomeEmail($firstName, $emailAddress, $code)
     {
-        $message = \Swift_Message::newInstance()->setSubject('PRISK Online Portal Profile')->setFrom('portal@prisk.or.ke', 'PRISK Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
                 'Emails/profile.htm.twig', array('name' => $firstName)), 'text/html');
         $this->get('mailer')->send($message);
 
@@ -306,35 +360,93 @@ class ProfileController extends Controller
 
     public function sendUnpaidWelcomeEmail($firstName, $emailAddress, $code)
     {
-        $message = \Swift_Message::newInstance()->setSubject('PRISK Online Portal Profile')->setFrom('portal@prisk.or.ke', 'PRISK Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
+        $message = \Swift_Message::newInstance()->setSubject('KAMP Online Portal Profile')->setFrom('kamp@patchcreate.com', 'KAMP Online Portal Team')->setTo($emailAddress)->setBody($this->renderView(// app/Resources/views/Emails/onboard.htm.twig
                 'Emails/unpaid.htm.twig', array('name' => $firstName, 'code' => $code)), 'text/html');
         $this->get('mailer')->send($message);
     }
 
     /**
-     * @Route("/member/mpesa/success", name="mpesa-success")
+     * @Route("/mpesa/updated/{transactionId}",name="mpesa_updated")
      */
-    public function mpesaPaymentSuccessAction()
+    public function mpesaPaymentSuccessAction(Request $request,$transactionId)
     {
-        //Receive Success Reply
-        $customerNumber = $_POST['MSISDN'];
-        $amount = $_POST['AMOUNT'];
-        $mpesaStatus = $_POST['TRX_STATUS'];
-        $trasactionDate = $_POST['M­PESA_TRX_DATE'];
-        $mPesaTrasactionId = $_POST['M­PESA_TRX_ID'];
-        $transactionReferenceId = $_POST['MERCHANT_TRANSACTION_ID'];
-        $mpesaDescritpion = $_POST['DESCRIPTION'];
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository("AppBundle:Profile")->findOneBy(['idNumber' => $transactionReferenceId]);
-        $user->setMpesaConfirmationCode($mPesaTrasactionId);
-        $user->setMpesaDescription($mpesaDescritpion);
-        $user->setMpesaPaymentDate($trasactionDate);
-        $user->setMpesaStatus($mpesaStatus);
-        $user->setIsPaid(true);
-        $user->setMpesaNumber($customerNumber);
-        $user->setMpesaAmount($amount);
-        $em->persist($user);
-        $em->flush();
+
+        $user = $em->getRepository("AppBundle:Profile")->findOneBy(['idNumber' => $transactionId]);
+        if ($user) {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $resultCode = $data['Body']['stkCallback']['ResultCode'];
+            $resultDesc = $data['Body']['stkCallback']['ResultDesc'];
+            $user->setMpesaDescription($resultDesc);
+            $transactionArray = array();
+            if ($resultCode == 0) {
+                $item = $data['Body']['stkCallback']['CallbackMetadata']['Item'];
+                $amount = $item[0]['Value'];
+                $mpesaCode = $item[1]['Value'];
+                $transDate = $item[3]['Value'];
+                $phoneNumber = $item[4]['Value'];
+                $user->setMpesaProcessed(true);
+                $user->setMpesaAmount($amount);
+                $user->setMpesaVerificationCode($mpesaCode);
+                $user->setMpesaStatus('Success');
+                $user->setMpesaNumber($phoneNumber);
+                $user->setIsPaid(true);
+                $user->setMpesaPaymentDate(new \DateTime());
+                $transactionArray = array("a" => $mpesaCode, "b" => $transDate, "c" => $phoneNumber, "d" => $amount);
+
+            } elseif ($resultCode == 1032) {
+                $user->setMpesaStatus("Cancelled");
+                $user->setIsPaid(false);
+                $user->setMpesaProcessed(true);
+            } else {
+                $user->setMpesaStatus("Failed");
+                $user->setIsPaid(false);
+                $user->setMpesaProcessed(true);
+            }
+            $em->persist($user);
+            $em->flush();
+            if ($resultCode == 0 && !$user->getMpesaProcessed()) {
+                $this->sendPaymentEmail($user->getFirstName(), $user->getEmailAddress(), $transactionArray);
+            }
+        }else{
+
+            $user = $em->getRepository("AppBundle:CorporateProfile")->findOneBy(['firstDirectorIdNumber' => $transactionId]);
+            $data = json_decode(file_get_contents('php://input'), true);
+            $resultCode = $data['Body']['stkCallback']['ResultCode'];
+            $resultDesc = $data['Body']['stkCallback']['ResultDesc'];
+            $user->setMpesaDescription($resultDesc);
+            $transactionArray = array();
+            if ($resultCode == 0) {
+                $item = $data['Body']['stkCallback']['CallbackMetadata']['Item'];
+                $amount = $item[0]['Value'];
+                $mpesaCode = $item[1]['Value'];
+                $transDate = $item[3]['Value'];
+                $phoneNumber = $item[4]['Value'];
+                $user->setMpesaProcessed(true);
+                $user->setMpesaAmount($amount);
+                $user->setMpesaVerificationCode($mpesaCode);
+                $user->setMpesaStatus('Success');
+                $user->setMpesaNumber($phoneNumber);
+                $user->setIsPaid(true);
+                $user->setMpesaPaymentDate(new \DateTime());
+                $transactionArray = array("a" => $mpesaCode, "b" => $transDate, "c" => $phoneNumber, "d" => $amount);
+
+            } elseif ($resultCode == 1032) {
+                $user->setMpesaStatus("Cancelled");
+                $user->setIsPaid(false);
+                $user->setMpesaProcessed(true);
+            } else {
+                $user->setMpesaStatus("Failed");
+                $user->setIsPaid(false);
+                $user->setMpesaProcessed(true);
+            }
+            $em->persist($user);
+            $em->flush();
+            if ($resultCode == 0 && !$user->getMpesaProcessed()) {
+                $this->sendPaymentEmail($user->getFirstName(), $user->getEmailAddress(), $transactionArray);
+            }
+        }
+        return $this->render('profile/mpesa.htm.twig');
     }
 
     /**
@@ -382,7 +494,7 @@ class ProfileController extends Controller
                 $docChoices['Copy of Valid National ID/Passport/Birth Certificate'] = 'ID-COPY';
             }
             if (!in_array('KRA-PIN', $docName)) {
-                $docChoices['Copy of Kenya Revenue Authority ITAX Pin Certificate'] = 'KRA-PIN';
+                $docChoices['Copy of Kenya Revenue Authority ITAX Updated Pin Certificate'] = 'KRA-PIN';
             }
             if (!in_array('NEXT-OF-KIN-ID', $docName)) {
                 $docChoices['Copy of Valid National ID/Passport or Birth Certificate Next of Kin'] = 'NEXT-OF-KIN-ID';
@@ -390,7 +502,7 @@ class ProfileController extends Controller
         }else {
                 $docChoices['Colour Passport-Size Photo'] = 'PASSPORT-PHOTO';
                 $docChoices['Copy of Valid National ID/Passport/Birth Certificate'] = 'ID-COPY';
-                $docChoices['Copy of Kenya Revenue Authority ITAX Pin Certificate'] = 'KRA-PIN';
+                $docChoices['Copy of Kenya Revenue Authority ITAX Updated Pin Certificate'] = 'KRA-PIN';
                 $docChoices['Copy of Valid National ID/Passport or Birth Certificate Next of Kin'] = 'NEXT-OF-KIN-ID';
 
         }
@@ -429,6 +541,89 @@ class ProfileController extends Controller
         );
 
     }
+    /**
+     * @Route("/corporate/{id}/add-documents",name="add-corporate-document")
+     */
+    public function addCorporateDocumentsAction(Request $request, CorporateProfile $profile)
+    {
+        $profileDocs = $profile->getCorporateProfileDocuments();
+        $docName[] = array();
+        $docChoices[]=array();
+
+        if ($profileDocs) {
+            //Get all the docs and put their type in an array
+            foreach ($profileDocs as $profileDoc) {
+                $docName[] = $profileDoc->getDocumentName();
+            }
+            //Create Choices based on Missing documents
+            if (!in_array('KRA-PIN', $docName)) {
+                $docChoices['Copy of Kenya Revenue Authority ITAX Updated Pin Certificate'] = 'KRA-PIN';
+            }
+            if (!in_array('REG-CERT', $docName)) {
+                $docChoices['Copy of Certificate of Registration or Incorporation'] = 'REG-CERT';
+            }
+            if (!in_array('DIR1-PASSPORT-PHOTO', $docName)) {
+                $docChoices['Colour Passport-Size Photo Of Director 1'] = 'DIR1-PASSPORT-PHOTO';
+            }
+            if (!in_array('DIR1-ID-COPY', $docName)) {
+                $docChoices['Copy of Valid National ID/Passport/Birth Certificate Of Director 1'] = 'DIR1-ID-COPY';
+            }
+            if ($profile->getCompanyType()!="Sole Proprietorship"){
+                if (!in_array('DIR2-PASSPORT-PHOTO', $docName)) {
+                    $docChoices['Colour Passport-Size Photo Of Director 2'] = 'DIR2-PASSPORT-PHOTO';
+                }
+                if (!in_array('DIR2-ID-COPY', $docName)) {
+                    $docChoices['Copy of Valid National ID/Passport/Birth Certificate Of Director 2'] = 'DIR2-ID-COPY';
+                }
+            }
+
+        }else {
+                $docChoices['Copy of Kenya Revenue Authority ITAX Updated Pin Certificate'] = 'KRA-PIN';
+                $docChoices['Copy of Certificate of Registration or Incorporation'] = 'REG-CERT';
+                $docChoices['Colour Passport-Size Photo Of Director 1'] = 'DIR1-PASSPORT-PHOTO';
+                $docChoices['Copy of Valid National ID/Passport/Birth Certificate Of Director 1'] = 'DIR1-ID-COPY';
+                 if ($profile->getCompanyType()!="Sole Proprietorship"){
+                    $docChoices['Colour Passport-Size Photo Of Director 2'] = 'DIR2-PASSPORT-PHOTO';
+                    $docChoices['Copy of Valid National ID/Passport/Birth Certificate Of Director 2'] = 'DIR2-ID-COPY';
+                }
+
+        }
+        $em = $this->getDoctrine()->getManager();
+
+        $document = new Documents();
+        $document->setWhichCorporateProfile($profile);
+
+        $form = $this->createForm(DocumentsFormType::class, $document,['docChoices'=>$docChoices]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $form->isSubmitted()) {
+            $document = $form->getData();
+
+            $profileId= $request->request->get('_pxc');
+
+            $profile = $em->getRepository("AppBundle:CorporateProfile")
+                ->findOneBy([
+                    'id'=>$profileId
+                ]);
+
+            $em->persist($document);
+            $em->flush();
+
+            return $this->redirectToRoute("add-corporate-document",array('id' => $profile->getId(),'done'=>'success'));
+
+
+        }
+        return $this->render(':profile/documents:add-corporate.htm.twig',
+            [
+                'form' => $form->createView(),
+                'profile' => $profile,
+                'success' =>''
+            ]
+        );
+
+    }
+
 
     /**
      * @Route("documents/added",name="document-added")

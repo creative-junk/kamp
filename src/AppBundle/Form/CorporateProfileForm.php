@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use function Sodium\add;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,33 +15,10 @@ class CorporateProfileForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName')
-            ->add('middleName')
-            ->add('lastName')
-            ->add('prefix', ChoiceType::class, [
-                'choices' => array(
-                    'Mr' => 'Mr',
-                    'Mrs' => 'Mrs',
-                    'Ms' => 'Ms.',
-                    'Miss' => 'Miss',
-                    'Dr' => 'Dr',
-                    'Eng' => 'Eng',
-                    'Pst' => 'Pst',
-                    'Other' => 'Other',
-                ),
-                'placeholder'=>'Select'
+            ->add('companyName',null,[
+                'read-only'=>true
             ])
-            ->add('dateOfBirth',DateType::class,[
-                'widget' => 'single_text',
-                'attr' => ['class' => 'js-datepicker'],
-                'html5' => false,
-            ])
-            ->add('incorporationNumber')
-            ->add('incorporationDate',DateType::class,[
-                'widget' => 'single_text',
-                'attr' => ['class' => 'js-sincepicker'],
-                'html5' => false,
-            ])
+            ->add('tradingName')
             ->add('companyName')
             ->add('companyType', ChoiceType::class, array(
                 'choices' => array(
@@ -51,51 +30,11 @@ class CorporateProfileForm extends AbstractType
                 'placeholder'=>'Select',
                 'disabled'=>true
             ))
-            ->add('nationality', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('countryFounded', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('countyOfOperation', ChoiceType::class, array(
+            ->add('itaxPin')
+            ->add('regNumber')
+            ->add('physicalAddress')
+            ->add('city')
+            ->add('county', ChoiceType::class, array(
                 'choices' => array(
                     'Nairobi' => 'Nairobi',
                     'Mombasa' => 'Mombasa',
@@ -104,7 +43,6 @@ class CorporateProfileForm extends AbstractType
                     'Nakuru' => 'Nakuru',
                     'Nyeri' => 'Nyeri',
                     'Machakos' => 'Machakos',
-                    'Bungoma' => 'Bungoma',
                     'Bungoma' => 'Bungoma',
                     'Busia' => 'Busia',
                     'Elgeyo Marakwet' => 'Elgeyo Marakwet',
@@ -146,102 +84,21 @@ class CorporateProfileForm extends AbstractType
                 ),
                 'placeholder'=>'Select'
             ))
-            ->add('language',ChoiceType::class, array(
-                'choices' => array(
-                    'English' => 'English',
-                    'Swahili' => 'Swahili',
-                ),
-                'placeholder'=>'Select',
-                'required'=>false,
-                'label'=>"Preffered Language"
-            ))
-            ->add('maritalStatus',ChoiceType::class, array(
-                'choices' => array(
-                    'Single' => 'Single',
-                    'Married' => 'Married',
-                    'Separated' => 'Separated',
-                    'Divorced' => 'Divorced',
-                    'Widowed' => 'Widowed',
-                    'Other' => 'Other',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('spouseName')
-            ->add('idNumber')
-            ->add('itaxPin')
-            ->add('countryOfResidence', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-
-            ->add('gender',ChoiceType::class,array(
-                'choices'=>array(
-                    'Male'=>'Male',
-                    'Female'=>'Female',
-                ),
-                'choices_as_values' => true,
-                'multiple'=>false,
-                'expanded'=>true,
-                'required' => true,
-            ))
-            ->add('physicalAddress')
             ->add('postalAddress')
             ->add('postalCode')
-            ->add('city')
-            ->add('country', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('phoneNumber',null,[
-                'attr'=>[
-                    'placeholder'=>'254720123456'
-                ]
-            ])
-            ->add('altPhoneNumber')
-            ->add('faxNumber')
+            ->add('telephone')
+            ->add('mobileNumber')
             ->add('emailAddress')
+            ->add('emailAddress2')
             ->add('website')
-            ->add('nameOfPayee')
-            ->add('paymentMpesaNumber',null,[
-                'required'=>true
-            ])
+            ->add('firstDirectorNames')
+            ->add('firstDirectorPosition')
+            ->add('firstDirectorIdNumber')
+            ->add('secondDirectorNames')
+            ->add('secondDirectorPosition')
+            ->add('secondDirectorIdNumber')
             ->add('accountName')
+            ->add('accountNumber')
             ->add('bank',ChoiceType::class, array(
                 'choices' => array(
                     'Africa Banking Corporation' => 'Africa Banking Corporation',
@@ -291,41 +148,28 @@ class CorporateProfileForm extends AbstractType
                 'placeholder'=>'Select'
             ))
             ->add('bankBranch')
-            ->add('accountNumber')
-            ->add('currency',ChoiceType::class, array(
-                'choices' => array(
-                    'Kenyan Shilling' => 'Kenyan Shilling',
-                    'Euro' => 'Euro',
-                    'Pound Sterling' => 'Pound Sterling',
-                    'Rand' => 'Rand',
-                    'Rwanda Franc' => 'Rwanda Franc',
-                    'South Sudanese Pound' => 'South Sudanese Pound',
-                    'Tanzania Shilling' => 'Tanzania Shilling',
-                    'Uganda Shilling' => 'Uganda Shilling',
-                    'US Dollar' => 'US Dollar',
-                    'Zambian Kwacha' => 'Zambian Kwacha',
-                    'Zimbabwe Dollar' => 'Zimbabwe Dollar',
-                    'Liberia' => 'Liberia',
+            ->add('bankCode')
+            ->add('sortCode')
+            ->add('swiftCode')
+            ->add('isCollectingSocietiesMember',ChoiceType::class,array(
+                'choices'=>array(
+                    'Yes'=>'Yes',
+                    'No'=>'No',
                 ),
-                'placeholder'=>'Select'
+                'choices_as_values' => true,
+                'multiple'=>false,
+                'expanded'=>true,
+                'required' => true,
             ))
-            ->add('bankAccountType',ChoiceType::class, array(
-                'choices' => array(
-                    'Current' => 'Current',
-                    'Savings' => 'Savings',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('bankPostalAddress')
-            ->add('iban')
-            ->add('swiftBic');
+            ->add('collectingSocieties')
+            ->add('termsOfService',CheckboxType::class);
 
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Profile'
+            'data_class' => 'AppBundle\Entity\CorporateProfile'
         ]);
     }
 

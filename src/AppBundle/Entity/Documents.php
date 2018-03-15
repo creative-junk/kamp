@@ -52,6 +52,10 @@ class Documents
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Profile",inversedBy="profileDocuments")
      */
     private $whichProfile;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CorporateProfile",inversedBy="corporateProfileDocuments")
+     */
+    private $whichCorporateProfile;
 
     /**
      * @ORM\Column(type="datetime")
@@ -213,6 +217,22 @@ class Documents
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWhichCorporateProfile()
+    {
+        return $this->whichCorporateProfile;
+    }
+
+    /**
+     * @param mixed $whichCorporateProfile
+     */
+    public function setWhichCorporateProfile($whichCorporateProfile)
+    {
+        $this->whichCorporateProfile = $whichCorporateProfile;
     }
 
 }

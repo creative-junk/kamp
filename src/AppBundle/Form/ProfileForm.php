@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,95 +16,13 @@ class ProfileForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName')
-            ->add('middleName')
-            ->add('lastName')
-            ->add('prefix', ChoiceType::class, [
-                'choices' => array(
-                    'Mr' => 'Mr',
-                    'Mrs' => 'Mrs',
-                    'Ms' => 'Ms.',
-                    'Miss' => 'Miss',
-                    'Dr' => 'Dr',
-                    'Eng' => 'Eng',
-                    'Pst' => 'Pst',
-                    'Other' => 'Other',
-                ),
-                'placeholder'=>'Select'
-            ])
+            ->add('applicantName')
+            ->add('idNumber')
             ->add('dateOfBirth',DateType::class,[
                 'widget' => 'single_text',
                 'attr' => ['class' => 'js-datepicker'],
                 'html5' => false,
             ])
-             ->add('nationality', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('language',ChoiceType::class, array(
-                'choices' => array(
-                    'English' => 'English',
-                    'Swahili' => 'Swahili',
-                ),
-                'placeholder'=>'Select',
-                'required'=>false,
-                'label'=>"Preffered Language"
-            ))
-            ->add('maritalStatus',ChoiceType::class, array(
-                'choices' => array(
-                    'Single' => 'Single',
-                    'Married' => 'Married',
-                    'Separated' => 'Separated',
-                    'Divorced' => 'Divorced',
-                    'Widowed' => 'Widowed',
-                    'Other' => 'Other',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('spouseName')
-            ->add('idNumber')
-            ->add('itaxPin')
-            ->add('countryOfResidence', ChoiceType::class, array(
-                'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-
             ->add('gender',ChoiceType::class,array(
                 'choices'=>array(
                     'Male'=>'Male',
@@ -115,45 +34,157 @@ class ProfileForm extends AbstractType
                 'required' => true,
             ))
             ->add('physicalAddress')
-            ->add('postalAddress')
-            ->add('postalCode')
             ->add('city')
-            ->add('country', ChoiceType::class, array(
+            ->add('county', ChoiceType::class, array(
                 'choices' => array(
-                    'Kenya' => 'Kenya',
-                    'Angola' => 'Angola',
-                    'Burundi' => 'Burundi',
-                    'Cameroon' => 'Cameroon',
-                    'Ethiopia' => 'Ethiopia',
-                    'Ghana' => 'Ghana',
-                    'Lesotho' => 'Lesotho',
-                    'Nigeria' => 'Nigeria',
-                    'Rwanda' => 'Rwanda',
-                    'Senegal' => 'Senegal',
-                    'South Africa' => 'South Africa',
-                    'South Sudan' => 'South Sudan',
-                    'Tanzania' => 'Tanzania',
-                    'Uganda' => 'Uganda',
-                    'Zambia' => 'Zambia',
-                    'Zibambwe' => 'Zimbabwe',
-                    'Liberia' => 'Liberia',
+                    'Nairobi' => 'Nairobi',
+                    'Mombasa' => 'Mombasa',
+                    'Kisumu' => 'Kisumu',
+                    'Muranga' => 'Muranga',
+                    'Nakuru' => 'Nakuru',
+                    'Nyeri' => 'Nyeri',
+                    'Machakos' => 'Machakos',
+                    'Bungoma' => 'Bungoma',
+                    'Busia' => 'Busia',
+                    'Elgeyo Marakwet' => 'Elgeyo Marakwet',
+                    'Embu' => 'Embu',
+                    'Garrisa' => 'Garrisa',
+                    'Homa Bay' => 'Homa Bay',
+                    'Isiolo' => 'Isiolo',
+                    'Kajiado' => 'Kajiado',
+                    'Kakamega' => 'Kakamega',
+                    'Kericho' => 'Kericho',
+                    'Kiambu' => 'Kiambu',
+                    'Kilifi' => 'Kilifi',
+                    'Kirinyaga' => 'Kirinyaga',
+                    'Kisii' => 'Kisii',
+                    'Kitui' => 'Kitui',
+                    'Kwale' => 'Kwale',
+                    'Laikipia' => 'Laikipia',
+                    'Lamu' => 'Lamu',
+                    'Makueni' => 'Makueni',
+                    'Mandera' => 'Mandera',
+                    'Marsabit' => 'Marsabit',
+                    'Meru' => 'Meru',
+                    'Migori' => 'Migori',
+                    'Nandi' => 'Nandi',
+                    'Narok' => 'Narok',
+                    'Nyamira' => 'Nyamira',
+                    'Nyandarua' => 'Nyandarua',
+                    'Samburu' => 'Samburu',
+                    'Siaya' => 'Siaya',
+                    'Taita Taveta' => 'Taita Taveta',
+                    'Tana River' => 'Tana River',
+                    'Tharaka Nithi' => 'Tharaka Nithi',
+                    'Trans Nzoia' => 'Trans Nzoia',
+                    'Turkana' => 'Turkana',
+                    'Uasin Gishu' => 'Uasin Gishu',
+                    'Vihiga' => 'Vihiga',
+                    'Wajir' => 'Wajir',
+                    'West Pokot' => 'West Pokot',
                 ),
                 'placeholder'=>'Select'
             ))
-            ->add('phoneNumber',null,[
-                'attr'=>[
-                    'placeholder'=>'254720123456'
-                ]
-            ])
-            ->add('altPhoneNumber')
-            ->add('faxNumber')
+            ->add('postalAddress')
+            ->add('postalCode')
+            ->add('telephoneNumber')
+            ->add('mobileNumber')
             ->add('emailAddress')
+            ->add('emailAddress2')
             ->add('website')
-            ->add('nameOfPayee')
-            ->add('paymentMpesaNumber',null,[
-                'required'=>true
-                ])
+            ->add('isCollectingSocietiesMember',ChoiceType::class,array(
+                'choices'=>array(
+                    'Yes'=>'Yes',
+                    'No'=>'No',
+                ),
+                'choices_as_values' => true,
+                'multiple'=>false,
+                'expanded'=>true,
+                'required' => true,
+            ))
+            ->add('collectingSocieties')
+            ->add('termsOfService',CheckboxType::class)
+            ->add('kinFirstName')
+            ->add('kinMiddleName')
+            ->add('kinLastName')
+            ->add('kinRelationship')
+            ->add('kinIdNumber')
+            ->add('kinDateOfBirth',DateType::class,[
+                'widget' => 'single_text',
+                'attr' => ['class' => 'js-datepicker'],
+                'html5' => false,
+            ])
+            ->add('kinGender',ChoiceType::class,array(
+                'choices'=>array(
+                    'Male'=>'Male',
+                    'Female'=>'Female',
+                ),
+                'choices_as_values' => true,
+                'multiple'=>false,
+                'expanded'=>true,
+                'required' => true,
+            ))
+            ->add('kinPhysicalAddress')
+            ->add('kinCity')
+            ->add('kinCounty', ChoiceType::class, array(
+                'choices' => array(
+                    'Nairobi' => 'Nairobi',
+                    'Mombasa' => 'Mombasa',
+                    'Kisumu' => 'Kisumu',
+                    'Muranga' => 'Muranga',
+                    'Nakuru' => 'Nakuru',
+                    'Nyeri' => 'Nyeri',
+                    'Machakos' => 'Machakos',
+                    'Bungoma' => 'Bungoma',
+                    'Busia' => 'Busia',
+                    'Elgeyo Marakwet' => 'Elgeyo Marakwet',
+                    'Embu' => 'Embu',
+                    'Garrisa' => 'Garrisa',
+                    'Homa Bay' => 'Homa Bay',
+                    'Isiolo' => 'Isiolo',
+                    'Kajiado' => 'Kajiado',
+                    'Kakamega' => 'Kakamega',
+                    'Kericho' => 'Kericho',
+                    'Kiambu' => 'Kiambu',
+                    'Kilifi' => 'Kilifi',
+                    'Kirinyaga' => 'Kirinyaga',
+                    'Kisii' => 'Kisii',
+                    'Kitui' => 'Kitui',
+                    'Kwale' => 'Kwale',
+                    'Laikipia' => 'Laikipia',
+                    'Lamu' => 'Lamu',
+                    'Makueni' => 'Makueni',
+                    'Mandera' => 'Mandera',
+                    'Marsabit' => 'Marsabit',
+                    'Meru' => 'Meru',
+                    'Migori' => 'Migori',
+                    'Nandi' => 'Nandi',
+                    'Narok' => 'Narok',
+                    'Nyamira' => 'Nyamira',
+                    'Nyandarua' => 'Nyandarua',
+                    'Samburu' => 'Samburu',
+                    'Siaya' => 'Siaya',
+                    'Taita Taveta' => 'Taita Taveta',
+                    'Tana River' => 'Tana River',
+                    'Tharaka Nithi' => 'Tharaka Nithi',
+                    'Trans Nzoia' => 'Trans Nzoia',
+                    'Turkana' => 'Turkana',
+                    'Uasin Gishu' => 'Uasin Gishu',
+                    'Vihiga' => 'Vihiga',
+                    'Wajir' => 'Wajir',
+                    'West Pokot' => 'West Pokot',
+                ),
+                'placeholder'=>'Select'
+            ))
+            ->add('kinPostalAddress')
+            ->add('kinPostalCode')
+            ->add('kinTelephoneNumber')
+            ->add('kinMobileNumber')
+            ->add('kinEmailAddress')
+            ->add('isKinMinor')
+            ->add('kinGuardian')
             ->add('accountName')
+            ->add('accountNumber')
             ->add('bank',ChoiceType::class, array(
                 'choices' => array(
                     'Africa Banking Corporation' => 'Africa Banking Corporation',
@@ -203,34 +234,10 @@ class ProfileForm extends AbstractType
                 'placeholder'=>'Select'
             ))
             ->add('bankBranch')
-            ->add('accountNumber')
-            ->add('currency',ChoiceType::class, array(
-                'choices' => array(
-                    'Kenyan Shilling' => 'Kenyan Shilling',
-                    'Euro' => 'Euro',
-                    'Pound Sterling' => 'Pound Sterling',
-                    'Rand' => 'Rand',
-                    'Rwanda Franc' => 'Rwanda Franc',
-                    'South Sudanese Pound' => 'South Sudanese Pound',
-                    'Tanzania Shilling' => 'Tanzania Shilling',
-                    'Uganda Shilling' => 'Uganda Shilling',
-                    'US Dollar' => 'US Dollar',
-                    'Zambian Kwacha' => 'Zambian Kwacha',
-                    'Zimbabwe Dollar' => 'Zimbabwe Dollar',
-                    'Liberia' => 'Liberia',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('bankAccountType',ChoiceType::class, array(
-                'choices' => array(
-                    'Current' => 'Current',
-                    'Savings' => 'Savings',
-                ),
-                'placeholder'=>'Select'
-            ))
-            ->add('bankPostalAddress')
-            ->add('iban')
-            ->add('swiftBic');
+            ->add('bankCode')
+            ->add('sortCode')
+            ->add('swiftCode');
+
 
     }
 

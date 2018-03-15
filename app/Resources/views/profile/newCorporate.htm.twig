@@ -128,7 +128,7 @@
                 <div class="panel-body">
                     <div class="text-center">
                         <div class="icon-objet border-success text-error"></div>
-                        <h5 class="content-group-lg">Register Online - Update Profile
+                        <h5 class="content-group-lg">Corporate Member Registration - Update Profile
                             <small class="display-block">Starred (*) Fields are required and must be filled for the
                                 entry to be successfully saved
                             </small>
@@ -147,283 +147,228 @@
                             {% endfor %}
 
                         {% endif %}
-                        <p><b>Name:</b> {{ profile.firstName }}&nbsp;{{ profile.lastName }}</p>
+                        <p><b>Applicant Name:</b> {{ profile.companyName }}</p>
                         <p><b>Email: </b>{{ profile.emailAddress }}</p>
                     </div>
 
                     {{ form_start(profileForm,{ 'attr': {'class': 'steps-validation'} }) }}
-                    <h6>Personal Information</h6>
+                    <h6>Applicant Information</h6>
                     <fieldset>
 
                         <div class="row">
                             <div class="col-md-6">
-                                {{ form_row(profileForm.prefix) }}
+                                {{ form_row(profileForm.companyName) }}
                             </div>
                             <div class="col-md-6">
-                                {{ form_row(profileForm.lastName,{
-                                    'label': 'Last Name'
+                                {{ form_row(profileForm.tradingName,{
+                                    'label': 'Last Name (if Different from Company Name)'
                                 }) }}
                             </div>
 
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.firstName,{
-                                    'label': 'First Name'
-                                }) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.middleName,{
-                                    'label': 'Middle Name'
+                            <div class="col-md-12">
+                                {{ form_row(profileForm.companyType,{
+                                    'label': 'Registration Type',
+                                    'attr': {'class': 'select' }
                                 }) }}
                             </div>
 
+
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.dateOfBirth) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.companyName,{
-                                    'label': 'Company Name'
-                                }) }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.nationality,{ 'attr': {'class': 'select'} }) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.language,{
-                                    'attr': {'class': 'select'}}) }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.maritalStatus,{
-                                    'label': 'Marital Status'
-                                }) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.spouseName,{
-                                    'label': 'Spouse Name'
-                                }) }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.idNumber,{
-                                    'label': 'ID / Passport Number.'
-                                }) }}
-                            </div>
+
                             <div class="col-md-6">
                                 {{ form_row(profileForm.itaxPin,{
-                                    'label': 'Pin Number (I-TAX Pin)'
+                                    'label': 'Pin Number (I-TAX Registered Pin)'
+                                }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.regNumber,{
+                                    'label': 'Reg No.'
                                 }) }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                {{ form_row(profileForm.countryOfResidence,{
-                                    'label': 'Country of Residence',
-                                    'attr': {'class': 'select'}
-                                }) }}
+                                {{ form_row(profileForm.physicalAddress) }}
                             </div>
-
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.city) }}
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                {{ form_row(profileForm.gender) }}
+                                {{ form_row(profileForm.postalAddress) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.postalCode) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form_row(profileForm.county,{
+                                    'attr': {'class': 'select' }
+                                }) }}
                             </div>
 
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.telephone) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.mobileNumber,{
+                                    'required':true,
+                                    'attr':{'placeholder':'254720123456'}
+                                })
+
+                                }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.emailAddress) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.emailAddress2) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                {{ form_row(profileForm.website) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.isCollectingSocietiesMember,{
+                                    'label':'Are you a Member of other collecting societies?'
+                                }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(profileForm.collectingSocieties,{
+                                    'label':'If Yes, Name them here'
+                                }) }}
+                            </div>
                         </div>
                     </fieldset>
-                    <h6>Company Information</h6>
+                    <h6>Director Information</h6>
+
+                    {% if profile.companyType == "Sole Proprietorship" %}
                     <fieldset>
-                        <div class="row">
 
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.companyType,{
-                                    'label': 'Company Type'
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.firstDirectorNames,{
+                                    'label':'Director Names'
                                 }) }}
                             </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.companyName,{
-                                    'label': 'Company Name'
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.firstDirectorPosition,{
+                                    'label':'Director Position'
                                 }) }}
                             </div>
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.incorporationDate) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.incorporationNumber) }}
-                            </div>
-                        </div>
-                        <div class="row">
-
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.countryFounded,{ 'attr': {'class': 'select'} }) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.countyOfOperation,{ 'attr': {'class': 'select'} }) }}
-                            </div>
-                        </div>
-
-                        <style>
-
-                            #profile_form_gender_1 {
-                                margin-left: 10px;
-                            }
-                        </style>
-
-                    </fieldset>
-                    <h6>Address Details</h6>
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.physicalAddress,{
-                                    'label': 'Physical Address'
-                                }) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.postalAddress,{
-                                    'label': 'Postal Address'
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.firstDirectorIdNumber,{
+                                    'label':'Director ID/PP No'
                                 }) }}
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.postalCode,{
-                                        'label': 'Postal Code'
-                                    }) }}
-                                </div>
+                        <div class="row" style="display: none">
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.secondDirectorNames) }}
                             </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.city) }}
-                                </div>
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.secondDirectorPosition) }}
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.country,{
-                                        'attr': {'class': 'select'}}) }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.phoneNumber,{
-                                        'label': 'Phone Number1 (25472XXXXXXX)'
-                                    }) }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.altPhoneNumber,{
-                                        'label': 'Phone Number2'
-                                    }) }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.faxNumber) }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.emailAddress,{
-                                        'label': 'Email Address'
-                                    }) }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.website) }}
-                                </div>
+                            <div class="col-md-4">
+                                {{ form_row(profileForm.secondDirectorIdNumber) }}
                             </div>
                         </div>
                     </fieldset>
+                    {% else %}
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.firstDirectorNames,{
+                                        'label':'First Director/Partner Names',
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.firstDirectorPosition,{
+                                        'label':'First Director/Partner Position'
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.firstDirectorIdNumber,{
+                                        'label': 'First Director/Partner ID/PP No.'
+                                    }) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.secondDirectorNames,{
+                                        'label':'Second Director/Partner Names',
+                                        'required':true
+
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.secondDirectorPosition,{
+                                        'label':'Second Director/Partner Position',
+                                        'required':true
+                                    }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(profileForm.secondDirectorIdNumber,{
+                                        'label':'Second Director/Partner ID / PP No.',
+                                        'required':true
+                                    }) }}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                    {% endif %}
+
                     <h6>Bank Details</h6>
                     <fieldset>
                         <div class="row">
                             <div class="col-md-6">
-                                {{ form_row(profileForm.nameOfPayee,{
-                                    'label': 'Name of Payee'
+                                {{ form_row(profileForm.accountName,{
+                                    'label': 'Account Holders Name'
                                 }) }}
                             </div>
                             <div class="col-md-6">
-                                {{ form_row(profileForm.paymentMpesaNumber,{
-                                    'label': 'Mpesa Number'
+                                {{ form_row(profileForm.accountNumber,{
+                                    'label': 'Account Number'
                                 }) }}
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(profileForm.accountName,{
-                                    'label': 'Account Name'
-                                }) }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     {{ form_row(profileForm.bank,{
                                         'attr': {'class': 'select'}}) }}
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     {{ form_row(profileForm.bankBranch,{
                                         'label': 'Bank Branch'
                                     }) }}
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    {{ form_row(profileForm.accountNumber,{
-                                        'label': 'Account Number'
-                                    }) }}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.currency,{
-                                        'attr': {'class': 'select'}}) }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.bankAccountType,{
-                                        'label': 'Bank Account Type',
-                                        'attr': {'class': 'select'}
-                                    }) }}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form_row(profileForm.bankPostalAddress,{
-                                        'label': 'Postal Address'
+                                    {{ form_row(profileForm.bankCode,{
+                                        'label': 'Bank Code'
                                     }) }}
                                 </div>
                             </div>
@@ -431,31 +376,43 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    {{ form_row(profileForm.iban,{
-                                        'label': 'Iban'
+                                    {{ form_row(profileForm.sortCode,{
+                                        'label': 'Sort Code'
                                     }) }}
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    {{ form_row(profileForm.swiftBic) }}
+                                    {{ form_row(profileForm.swiftCode,{
+                                        'label': 'Swift Code'
+                                    }) }}
                                 </div>
                             </div>
+                        </div>
+
+                    </fieldset>
+                    <h6>Terms &amp; Conditions</h6>
+                    <fieldset>
+                        <div class="row">
+                            <p>I hereby confirm that the information on this form is true to be true to the best of my knowledge and belief and that i have duly read
+                                and understood the terms of membership attached hereto.</p>
+                        {{ form_row(profileForm.termsOfService,{
+                            'label':'Accept'
+                        }) }}
                         </div>
                     </fieldset>
-
                     <h6>Payment</h6>
                     <fieldset>
                         <div class="row">
 
-                            <p>The Registration fee is <b>Ksh 5,000</b> payable to <b>KAMP( Kenya Association of Music Producers )</b>.</p>
+                            <p>The Registration fee is <b>Ksh 10,000</b> payable to <b>KAMP( Kenya Association of Music Producers )</b>.</p>
                             <br/>
                             <p><i>**Kindly note your registration will not be reviewed until payment is made.</i></p>
                             <br/>
                             <b>
                                 <input type="radio" name="payment" checked value="pay">&nbsp;Pay and Continue<br/>
-                                <input type="radio" name="payment" value="skip">&nbsp;Pay Later
+                              <!--  <input type="radio" name="payment" value="skip">&nbsp;Pay Later -->
                             </b>
                         </div>
                         <div class="row">

@@ -1,5 +1,6 @@
 {% extends 'adminBase.htm.twig' %}
 {% block title %}Board Approved Users{% endblock %}
+{% block boardapproved %} active {% endblock %}
 {% block javascripts %}
 
     <!-- jqueryui -->
@@ -68,52 +69,49 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div id="content" class="app-content box-shadow-z0" role="main">
-
-
-        <div ui-view class="app-body" id="view">
-           {{ include(':admin/partials:top.htm.twig') }}
-            <div class="padding">
-                <div class="page messages">
-                    <div class="messages" style="">
-                        <div class="alert alert-success">
-                            <div>
-                                Account Created successfully.
-                            </div>
-                        </div>
-
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-md-12">
+    <div class="card">
+    <div class="card-header" data-background-color="red">
+        <h4 class="title" style="color: #fff;">Board Approved Profiles</h4>
+    </div>
+    <div class="card-content table-responsive">
+        <div class="page messages" style="display: none">
+            <div class="messages" style="">
+                <div class="alert alert-success">
+                    <div>
+                        Account Created successfully.
                     </div>
                 </div>
-                <div class="page errors">
-                    <div class="errors" style="">
-                        <div class="alert alert-danger">
-                            <div>
-                               :-( Something went wrong. An Account might already exist for this profile.
-                            </div>
-                        </div>
 
+            </div>
+        </div>
+        <div class="page errors" style="display: none">
+            <div class="errors" style="">
+                <div class="alert alert-danger">
+                    <div>
+                        :-( Something went wrong. An Account might already exist for this profile.
                     </div>
                 </div>
-                <div class="box">
-                    <div class="box-header">
-                        <h2>Board Approved Profiles</h2>
-                    </div>
-                    <div class="table-responsive">
-                        <table id="data" class="table table-striped b-t b-b">
+
+            </div>
+        </div>
+        <table id="datatables" class="table table-striped table-no-bordered table-hover material-datatables" cellspacing="0" width="100%" style="width:100%">
                             <thead>
                             <tr>
                                 <th  style="width:20%">Names</th>
-                                <th  style="width:20%">Member Number</th>
-                                <th  style="width:20%">Stage Name</th>
+                                <th  style="width:20%">Member #</th>
+                                <th  style="width:20%">Id Number</th>
                                 <th  style="width:15%">Email</th>
                                 <th  style="width:25%">Created At</th>
-                                <th  style="width:25%">Manage</th>
+                                <th  style="width:25%">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users  %}
                                 <tr>
-                                    <td><a style="color:#0cc2aa" href="{{ path('review-profile',{'id': user.id }) }}">{{ user.fullName }}</a></td>
+                                    <td><a style="color:#0cc2aa" href="{{ path('review-profile',{'id': user.id }) }}">{{ user.applicantNames }}</a></td>
                                     <td>
                                         {% if user.memberNumber =="" %}
                                             <a href="#" id="memberNumber" data-type="text" data-pk="{{ user.id }}" data-url="{{ path('update-member-number') }}" data-title="Enter Member Number">Click to add</a>
@@ -121,7 +119,7 @@
                                         {{ user.memberNumber }}
                                             {% endif %}
                                             </td>
-                                    <td>{{ user.stageName }}</td>
+                                    <td>{{ user.idNumber }}</td>
                                     <td>{{ user.emailAddress }}</td>
                                     <td>{{ user.createdAt | date("F jS \\a\\t g:ia") }}</td>
                                     <td>
@@ -138,10 +136,6 @@
 
 
                                        {% else %}
-                                           <a href="{{ path('pdf-profile',{'id': user.id }) }}"
-                                              class="btn btn-xs white btn-icon"><i title="Export" class="fa fa-file-pdf-o"></i></a>
-                                           <a href="{{ path('next-of-kin',{'id': user.id }) }}"
-                                              class="btn btn-xs white btn-icon"><i title="Next of Kin" id="create-account" class="fa fa-id-badge"></i></a>
                                        {% endif %}
 
                                     </td>
@@ -156,5 +150,11 @@
             <!-- ############ PAGE END-->
 
         </div>
+        </table>
     </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
 {% endblock %}

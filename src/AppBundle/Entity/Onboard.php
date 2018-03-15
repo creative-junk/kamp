@@ -30,14 +30,30 @@ class Onboard
     private $id;
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "Your first name MUST be provided")
+     * @Assert\NotBlank(message = "Your full names as they appear on your ID MUST be provided")
      */
-    private $firstName;
+    private $firstDirectorNames;
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "Your last name MUST be provided")
+     * @Assert\NotBlank(message = "Your ID number Must Be Provided")
      */
-    private $lastName;
+    private $firstDirectorId;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $firstDirectorPosition;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $secondDirectorNames;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $secondDirectorPosition;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $secondDirectorId;
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message = "Your company name MUST be provided")
@@ -48,11 +64,6 @@ class Onboard
      * @Assert\NotBlank(message = "Your company name MUST be provided")
      */
     private $companyType;
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "This value should not be blank")
-     */
-    private $idNumber;
     /**
      * @ORM\Column(type="string")
      * @Assert\Email(message = "Your email address MUST be provided")
@@ -79,38 +90,6 @@ class Onboard
     /**
      * @return mixed
      */
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param mixed $firstName
-     */
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param mixed $lastName
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getCompanyName()
     {
         return $this->companyName;
@@ -127,17 +106,97 @@ class Onboard
     /**
      * @return mixed
      */
-    public function getIdNumber()
+    public function getFirstDirectorNames()
     {
-        return $this->idNumber;
+        return $this->firstDirectorNames;
     }
 
     /**
-     * @param mixed $idNumber
+     * @param mixed $firstDirectorNames
      */
-    public function setIdNumber($idNumber)
+    public function setFirstDirectorNames($firstDirectorNames)
     {
-        $this->idNumber = $idNumber;
+        $this->firstDirectorNames = $firstDirectorNames;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFirstDirectorId()
+    {
+        return $this->firstDirectorId;
+    }
+
+    /**
+     * @param mixed $firstDirectorId
+     */
+    public function setFirstDirectorId($firstDirectorId)
+    {
+        $this->firstDirectorId = $firstDirectorId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFirstDirectorPosition()
+    {
+        return $this->firstDirectorPosition;
+    }
+
+    /**
+     * @param mixed $firstDirectorPosition
+     */
+    public function setFirstDirectorPosition($firstDirectorPosition)
+    {
+        $this->firstDirectorPosition = $firstDirectorPosition;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSecondDirectorNames()
+    {
+        return $this->secondDirectorNames;
+    }
+
+    /**
+     * @param mixed $secondDirectorNames
+     */
+    public function setSecondDirectorNames($secondDirectorNames)
+    {
+        $this->secondDirectorNames = $secondDirectorNames;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSecondDirectorPosition()
+    {
+        return $this->secondDirectorPosition;
+    }
+
+    /**
+     * @param mixed $secondDirectorPosition
+     */
+    public function setSecondDirectorPosition($secondDirectorPosition)
+    {
+        $this->secondDirectorPosition = $secondDirectorPosition;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSecondDirectorId()
+    {
+        return $this->secondDirectorId;
+    }
+
+    /**
+     * @param mixed $secondDirectorId
+     */
+    public function setSecondDirectorId($secondDirectorId)
+    {
+        $this->secondDirectorId = $secondDirectorId;
     }
 
     /**

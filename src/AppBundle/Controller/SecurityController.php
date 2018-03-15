@@ -183,7 +183,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/login/admin",name="admin-login")
+     * @Route("/login/admin",name="security-login")
      *
      */
     public function loginAdminAction()

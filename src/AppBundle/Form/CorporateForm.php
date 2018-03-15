@@ -24,9 +24,8 @@ class CorporateForm extends AbstractType
                 'placeholder'=>'Select'
             ))
             ->add('companyName')
-            ->add('firstName')
-            ->add('lastName')
-            ->add('idNumber')
+            ->add('firstDirectorNames')
+            ->add('firstDirectorId')
             ->add('email',RepeatedType::class,[
                 'type' => EmailType::class
             ])
@@ -35,7 +34,9 @@ class CorporateForm extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-
+        $resolver->setDefaults([
+            'data_class' => 'AppBundle\Entity\OnBoard'
+        ]);
     }
 
     public function getBlockPrefix()

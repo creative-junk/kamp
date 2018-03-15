@@ -83,7 +83,7 @@ class AdminController extends Controller
 
         $user = new User();
         $user->setIsActive(true);
-        $user->setRoles(["ROLE_ADMIN"]);
+
         $user->setPlainPassword(base64_encode(random_bytes(10)));
         $user->setAccountCreatedBy($admin);
         $user->setPasswordResetToken($accountToken);
@@ -95,10 +95,19 @@ class AdminController extends Controller
         if ($form->isValid() && $form->isSubmitted()){
             $user=$form->getData();
 
+            $role = $request->request->get('role');
+
+            if ($role=="Membership") {
+                $user->setRoles(["ROLE_MEMBERSHIP"]);
+            }elseif ($role =="Board"){
+                $user->setRoles(["ROLE_BOARD"]);
+            }elseif ($role =="Administrator"){
+                $user->setRoles(["ROLE_ADMINISTRATOR"]);
+            }
             $em->persist($user);
             $em->flush();
 
-            $this->sendEmail($user->getFirstName(),"Prisk Portal Administrator Account",$user->getEmail(),"accountCreated.htm.twig",$accountToken);
+            $this->sendEmail($user->getFirstName(),"KAMP Portal Administrator Account",$user->getEmail(),"accountCreated.htm.twig",$accountToken);
 
             return $this->redirectToRoute('admin-accounts');
         }

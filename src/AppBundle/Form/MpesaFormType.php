@@ -11,7 +11,7 @@ class MpesaFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-           ->add('phoneNumber',null,[
+           ->add('mobileNumber',null,[
                 'attr'=>[
                 'placeholder' =>'254720123456'
                     ]

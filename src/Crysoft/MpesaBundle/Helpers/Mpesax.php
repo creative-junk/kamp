@@ -81,18 +81,6 @@ class Mpesax
      */
     protected $keys;
     /**
-     * Consumer key
-     *
-     * @var string
-     */
-    protected $consumerKey;
-    /**
-     * Consumer Secret
-     *
-     * @var string
-     */
-    protected $consumerSecret;
-    /**
      * The request to be sent to the endpoint
      *
      * @var string
@@ -140,7 +128,7 @@ class Mpesax
         $this->setUpAPI();
 
         $this->client = new Client([
-           'verify'             => false,
+            'verify'             => false,
             'timeout'           => 60,
             'allow_redirects'   => false,
             'expect'            => false
@@ -225,8 +213,6 @@ class Mpesax
         $this->callbackMethod   = $config['mpesa']['callback_method'];
         $this->paybillNumber    = $config['mpesa']['paybill_number'];
         $this->passKey          = $config['mpesa']['pass_key'];
-        $this->consumerSecret   = $config['mpesa']['consumer_secret'];
-        $this->consumerKey      = $config['mpesa']['consumer_key'];
     }
 
     /**
@@ -331,7 +317,7 @@ class Mpesax
             'CM_CALLBACK_URL'     => $this->callbackUrl,
             'CM_CALLBACK_METHOD'  => $this->callbackMethod,
         ];
-       // var_dump($this->keys['CM_TRANS_ID']);exit;
+        // var_dump($this->keys['CM_TRANS_ID']);exit;
     }
 
     protected function validateKeys()
@@ -375,56 +361,20 @@ class Mpesax
 
     protected function execute()
     {
-       /* $response = $this->client->request('GET',$this->endPoint,[
-            'body'=>  $this->request
-        ]);*/
-
-        $passwordSource = $this->paybillNumber.$this->passKey.$this->timestamp;
-        $this->password = base64_encode(hash("sha256",$passwordSource));
-
-        $url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        $credentials = base64_encode($this->consumerKey.':'.$this->consumerSecret);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Basic '.$credentials)); //setting a custom header
-        curl_setopt($curl, CURLOPT_HEADER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-        $curl_response = curl_exec($curl);
-
-        $response = json_decode($curl_response);
-        curl_close($curl);
-        var_dump($response);exit;
-
+        /* $response = $this->client->request('GET',$this->endPoint,[
+             'body'=>  $this->request
+         ]);*/
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->endPoint);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer ACCESS_TOKEN')); //setting custom header
-
-        $curl_post_data = array(
-            //Request Parameters
-            'BusinessShortCode' => $this->paybillNumber,
-            'Password' => $this->password,
-            'Timestamp' => $this->timestamp,
-            'TransactionType' => 'CustomerPayBillOnline',
-            'Amount"' => '10',
-            'PartyA' => '254708374149',
-            'PartyB' => $this->paybillNumber,
-            'PhoneNumber' => '254708374149',
-            'CallBackURL' => 'https://ip_address:port/callback',
-            'AccountReference' => ' ',
-            'TransactionDesc' => ' '
-        );
-
-        $data_string = json_encode($curl_post_data);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_VERBOSE, '0');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '0');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, '0');
         $response = curl_exec($ch);
+        curl_close($ch);
 
-        var_dump($response);exit;
         return $response;
     }
 
@@ -476,11 +426,11 @@ class Mpesax
      */
     protected function validate($data = [])
     {
-       /* foreach ($this->rules as $value) {
-            if (! array_key_exists($value, $data)) {
-                throw new InvalidRequestException(InvalidRequestException::ERRORS[$value]);
-            }
-        }*/
+        /* foreach ($this->rules as $value) {
+             if (! array_key_exists($value, $data)) {
+                 throw new InvalidRequestException(InvalidRequestException::ERRORS[$value]);
+             }
+         }*/
     }
 
 
